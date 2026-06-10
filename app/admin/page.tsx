@@ -1,29 +1,63 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Shield, Users, Activity, Lock, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Shield, Users, Activity, Lock, Plus, Loader2, CheckCircle, X } from "lucide-react";
 
-const users = [
-  { id: "web-user-1", name: "Dr. Muhammad Fathy", role: "owner", messages: 1284, lastActive: "2m ago" },
-  { id: "tg-admin-1", name: "Telegram Admin", role: "admin", messages: 342, lastActive: "1h ago" },
-  { id: "wa-user-1", name: "WhatsApp User", role: "user", messages: 87, lastActive: "3h ago" },
-];
-
-const auditLog = [
-  { time: "22:48", user: "web-user-1", action: "chat", agent: "cybersecurity", msg: "Zero Trust architecture query" },
-  { time: "22:31", user: "web-user-1", action: "chat", agent: "dfir", msg: "Ransomware IR playbook" },
-  { time: "21:55", user: "tg-admin-1", action: "command", agent: "—", msg: "/scan feto-agent-production.up.railway.app" },
-  { time: "21:12", user: "web-user-1", action: "chat", agent: "banking", msg: "T24 go-live checklist" },
-  { time: "20:44", user: "wa-user-1", action: "chat", agent: "technology", msg: "Nutanix vs VMware comparison" },
-];
+interface User { id: string; email: string; name: string; role: string; last_login?: string; created_at?: string; }
 
 const roleColors: Record<string, string> = {
   owner: "text-[#d4a843] bg-[#d4a843]/10 border-[#d4a843]/30",
   admin: "text-blue-400 bg-blue-900/20 border-blue-800/30",
   user: "text-slate-400 bg-[#0d2144] border-[#1a2235]",
+  readonly: "text-slate-500 bg-[#071428] border-[#0d2144]",
 };
 
 export default function AdminPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+
+  // Create user form
+  const [newEmail, setNewEmail] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newRole, setNewRole] = useState("user");
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState("");
+  const [createSuccess, setCreateSuccess] = useState("");
+
+  useEffect(() => {
+    fetch("/api/users/list")
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setUsers(d.users); })
+      .catch(() => {})
+      .finally(() => setLoadingUsers(false));
+  }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError(""); setCreateSuccess("");
+    if (!newEmail || !newName || !newPassword) { setCreateError("All fields required"); return; }
+    setCreateLoading(true);
+    try {
+      const res = await fetch("/api/users/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newEmail, name: newName, password: newPassword, role: newRole }),
+      });
+      const data = await res.json();
+      if (!data.success) { setCreateError(data.error || "Failed"); }
+      else {
+        setCreateSuccess(`User ${data.user.name} created`);
+        setUsers((prev) => [...prev, data.user]);
+        setNewEmail(""); setNewName(""); setNewPassword(""); setNewRole("user");
+        setTimeout(() => { setShowCreate(false); setCreateSuccess(""); }, 2000);
+      }
+    } catch { setCreateError("Connection error"); }
+    finally { setCreateLoading(false); }
+  };
+
   return (
     <div className="min-h-screen bg-[#040d1a] text-slate-200">
       <header className="border-b border-[#0d2144] bg-[#071428] px-6 py-4 flex items-center gap-4">
@@ -35,25 +69,21 @@ export default function AdminPage() {
           <span className="font-semibold text-sm">Admin Portal</span>
         </div>
         <div className="ml-auto flex items-center gap-1.5 text-xs text-[#d4a843]">
-          <Lock size={11} />
-          Owner only
+          <Lock size={11} /> Owner / Admin only
         </div>
       </header>
 
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        {/* Summary */}
+        {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: "Total Users", value: "3", icon: Users },
-            { label: "Total Messages", value: "1,713", icon: Activity },
-            { label: "Active Agents", value: "10", icon: Shield },
-            { label: "Security Flags", value: "0", icon: AlertTriangle },
-          ].map(({ label, value, icon: Icon }) => (
+            { label: "Total Users", value: users.length || "—" },
+            { label: "Admins", value: users.filter(u => u.role === "admin" || u.role === "owner").length || "—" },
+            { label: "Active Agents", value: "10" },
+            { label: "Security Flags", value: "0" },
+          ].map(({ label, value }) => (
             <div key={label} className="bg-[#071428] border border-[#0d2144] rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-slate-500">{label}</span>
-                <Icon size={13} className="text-slate-600" />
-              </div>
+              <p className="text-xs text-slate-500 mb-2">{label}</p>
               <p className="text-xl font-semibold text-slate-100">{value}</p>
             </div>
           ))}
@@ -61,36 +91,104 @@ export default function AdminPage() {
 
         {/* Users */}
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#0d2144]">
+          <div className="px-5 py-4 border-b border-[#0d2144] flex items-center justify-between">
             <h3 className="text-sm font-medium text-slate-300 flex items-center gap-2">
               <Users size={14} className="text-[#d4a843]" /> Users
             </h3>
+            <button
+              onClick={() => setShowCreate(!showCreate)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-[#d4a843] text-[#040d1a] font-semibold hover:bg-[#c49a2a] transition-colors"
+            >
+              <Plus size={12} /> New User
+            </button>
           </div>
+
+          {/* Create user form */}
+          {showCreate && (
+            <div className="border-b border-[#0d2144] bg-[#0d2144]/40 px-5 py-4">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-medium text-slate-300">Create New User</h4>
+                <button onClick={() => setShowCreate(false)} className="text-slate-500 hover:text-slate-300">
+                  <X size={14} />
+                </button>
+              </div>
+              <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1">Full Name</label>
+                  <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Dr. Ahmed Hassan"
+                    className="w-full px-3 py-2 rounded-lg bg-[#071428] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1">Email</label>
+                  <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="ahmed@bank.com"
+                    className="w-full px-3 py-2 rounded-lg bg-[#071428] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1">Password</label>
+                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min 8 characters"
+                    className="w-full px-3 py-2 rounded-lg bg-[#071428] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1">Role</label>
+                  <select value={newRole} onChange={(e) => setNewRole(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-[#071428] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 outline-none">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                    <option value="readonly">Read Only</option>
+                  </select>
+                </div>
+                {createError && <p className="sm:col-span-2 text-xs text-red-400 bg-red-900/20 border border-red-800/30 rounded-lg px-3 py-2">{createError}</p>}
+                {createSuccess && <p className="sm:col-span-2 text-xs text-emerald-400 bg-emerald-900/20 border border-emerald-800/30 rounded-lg px-3 py-2 flex items-center gap-1.5"><CheckCircle size={12} />{createSuccess}</p>}
+                <div className="sm:col-span-2">
+                  <button type="submit" disabled={createLoading}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-50 text-[#040d1a] text-sm font-semibold transition-colors">
+                    {createLoading ? <Loader2 size={13} className="animate-spin" /> : <Plus size={13} />}
+                    {createLoading ? "Creating..." : "Create User"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[#0d2144]">
-                  {["User ID", "Name", "Role", "Messages", "Last Active"].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-xs text-slate-500 font-medium">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u) => (
-                  <tr key={u.id} className="border-b border-[#0d2144]/50 last:border-0 hover:bg-[#0d2144]/30 transition-colors">
-                    <td className="px-5 py-3 font-mono text-xs text-slate-500">{u.id}</td>
-                    <td className="px-5 py-3 text-slate-300">{u.name}</td>
-                    <td className="px-5 py-3">
-                      <span className={`px-2 py-0.5 rounded text-xs border font-mono ${roleColors[u.role]}`}>
-                        {u.role}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-slate-400 font-mono text-xs">{u.messages.toLocaleString()}</td>
-                    <td className="px-5 py-3 text-slate-500 text-xs">{u.lastActive}</td>
+            {loadingUsers ? (
+              <div className="flex items-center justify-center py-8 text-slate-500 text-sm gap-2">
+                <Loader2 size={14} className="animate-spin" /> Loading users...
+              </div>
+            ) : users.length === 0 ? (
+              <div className="text-center py-8 text-slate-500 text-sm">
+                No users found. Create your first user above.
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#0d2144]">
+                    {["Name", "Email", "Role", "Last Login", "Created"].map((h) => (
+                      <th key={h} className="text-left px-5 py-3 text-xs text-slate-500 font-medium">{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u.id} className="border-b border-[#0d2144]/50 last:border-0 hover:bg-[#0d2144]/30 transition-colors">
+                      <td className="px-5 py-3 text-slate-300 font-medium">{u.name}</td>
+                      <td className="px-5 py-3 text-slate-400 text-xs font-mono">{u.email}</td>
+                      <td className="px-5 py-3">
+                        <span className={`px-2 py-0.5 rounded text-xs border font-mono ${roleColors[u.role] || roleColors.user}`}>
+                          {u.role}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-slate-500 text-xs">
+                        {u.last_login ? new Date(u.last_login).toLocaleDateString() : "Never"}
+                      </td>
+                      <td className="px-5 py-3 text-slate-500 text-xs">
+                        {u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
 
@@ -98,32 +196,11 @@ export default function AdminPage() {
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl overflow-hidden">
           <div className="px-5 py-4 border-b border-[#0d2144]">
             <h3 className="text-sm font-medium text-slate-300 flex items-center gap-2">
-              <Activity size={14} className="text-[#d4a843]" /> Audit Log
+              <Activity size={14} className="text-[#d4a843]" /> Recent Activity
             </h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[#0d2144]">
-                  {["Time", "User", "Action", "Agent", "Message"].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-xs text-slate-500 font-medium">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {auditLog.map((row, i) => (
-                  <tr key={i} className="border-b border-[#0d2144]/50 last:border-0 hover:bg-[#0d2144]/30 transition-colors">
-                    <td className="px-5 py-3 font-mono text-xs text-slate-500">{row.time}</td>
-                    <td className="px-5 py-3 font-mono text-xs text-slate-500">{row.user}</td>
-                    <td className="px-5 py-3">
-                      <span className="px-2 py-0.5 rounded text-xs bg-[#0d2144] text-slate-400 font-mono">{row.action}</span>
-                    </td>
-                    <td className="px-5 py-3 font-mono text-xs text-[#d4a843]">{row.agent}</td>
-                    <td className="px-5 py-3 text-slate-400 text-xs truncate max-w-xs">{row.msg}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="px-5 py-4 text-sm text-slate-500 text-center">
+            Live audit log — connect to Supabase ai_audit_log table
           </div>
         </div>
       </div>

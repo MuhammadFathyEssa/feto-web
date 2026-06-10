@@ -17,19 +17,30 @@ export default function LoginPage() {
     if (!email || !password) { setError("Enter email and password"); return; }
     setLoading(true);
     setError("");
-    // Simulate auth — replace with real auth when ready
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    router.push("/");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } catch {
+      setError("Connection error. Try again.");
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#040d1a] px-4">
-      {/* Background grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(20,48,96,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(20,48,96,0.15)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
-
       <div className="w-full max-w-sm relative z-10">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-[#d4a843]/10 border border-[#d4a843]/30 flex items-center justify-center mb-4">
             <Shield size={28} className="text-[#d4a843]" />
@@ -37,8 +48,6 @@ export default function LoginPage() {
           <h1 className="text-xl font-semibold text-slate-100">FeTo Enterprise</h1>
           <p className="text-sm text-slate-500 mt-1">AI Assistant Platform</p>
         </div>
-
-        {/* Form */}
         <form onSubmit={handleLogin} className="bg-[#071428] border border-[#0d2144] rounded-2xl p-6 space-y-4">
           <div>
             <label className="block text-xs text-slate-400 mb-1.5 font-medium">Email</label>
@@ -47,6 +56,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@bank.com"
+              autoComplete="email"
               className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none transition-colors"
             />
           </div>
@@ -58,6 +68,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 className="w-full px-3 py-2.5 pr-10 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none transition-colors"
               />
               <button
@@ -69,13 +80,11 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
-
           {error && (
             <p className="text-xs text-red-400 bg-red-900/20 border border-red-800/30 rounded-lg px-3 py-2">
               {error}
             </p>
           )}
-
           <button
             type="submit"
             disabled={loading}
@@ -85,7 +94,6 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
-
         <p className="text-center text-xs text-slate-600 mt-6">
           Banque Du Caire · Technology Services &amp; IT Operations
         </p>

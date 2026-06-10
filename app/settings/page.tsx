@@ -2,19 +2,62 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Shield, Save, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Shield, Save, CheckCircle, KeyRound, Loader2, LogOut } from "lucide-react";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [saved, setSaved] = useState(false);
-  const [apiUrl, setApiUrl] = useState(
+  const [apiUrl] = useState(
     process.env.NEXT_PUBLIC_API_URL || "https://feto-agent-production.up.railway.app"
   );
-  const [userId, setUserId] = useState("web-user-1");
-  const [name, setName] = useState("Dr. Muhammad Fathy");
+
+  // Change password state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwError, setPwError] = useState("");
+  const [pwSuccess, setPwSuccess] = useState("");
 
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwError("");
+    setPwSuccess("");
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPwError("All fields required"); return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError("New passwords do not match"); return;
+    }
+    if (newPassword.length < 8) {
+      setPwError("New password must be at least 8 characters"); return;
+    }
+    setPwLoading(true);
+    try {
+      const res = await fetch("/api/users/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (!data.success) { setPwError(data.error || "Failed"); }
+      else {
+        setPwSuccess("Password changed successfully");
+        setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
+      }
+    } catch { setPwError("Connection error"); }
+    finally { setPwLoading(false); }
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
   };
 
   return (
@@ -27,91 +70,87 @@ export default function SettingsPage() {
           <Shield size={18} className="text-[#d4a843]" />
           <span className="font-semibold text-sm">Settings</span>
         </div>
+        <button onClick={handleLogout} className="ml-auto flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          <LogOut size={13} /> Sign out
+        </button>
       </header>
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
-        {/* Profile */}
-        <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
-          <h3 className="text-sm font-medium text-slate-300 mb-4">Profile</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Display Name</label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 outline-none transition-colors"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-slate-400 mb-1.5">User ID</label>
-              <input
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 outline-none transition-colors font-mono"
-              />
-              <p className="text-xs text-slate-600 mt-1">Used as userId in API calls. Change to match your Telegram ID for history sync.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* API */}
+        {/* API Config */}
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4">API Configuration</h3>
           <div>
             <label className="block text-xs text-slate-400 mb-1.5">Railway API URL</label>
             <input
               value={apiUrl}
-              onChange={(e) => setApiUrl(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 outline-none transition-colors font-mono"
+              readOnly
+              className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] text-sm text-slate-400 outline-none font-mono"
             />
-            <p className="text-xs text-slate-600 mt-1">
-              Set via NEXT_PUBLIC_API_URL environment variable on Vercel for persistence.
-            </p>
+            <p className="text-xs text-slate-600 mt-1">Configured via NEXT_PUBLIC_API_URL on Vercel.</p>
           </div>
         </div>
 
-        {/* Appearance */}
+        {/* Change Password */}
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
-          <h3 className="text-sm font-medium text-slate-300 mb-4">Appearance</h3>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-300">Dark mode</p>
-              <p className="text-xs text-slate-500">Banking-grade dark theme</p>
-            </div>
-            <div className="w-9 h-5 bg-[#d4a843] rounded-full relative cursor-not-allowed">
-              <div className="w-3.5 h-3.5 bg-[#040d1a] rounded-full absolute right-0.5 top-0.5" />
-            </div>
-          </div>
+          <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
+            <KeyRound size={14} className="text-[#d4a843]" /> Change Password
+          </h3>
+          <form onSubmit={handleChangePassword} className="space-y-4">
+            {[
+              { label: "Current Password", value: currentPassword, set: setCurrentPassword, auto: "current-password" },
+              { label: "New Password", value: newPassword, set: setNewPassword, auto: "new-password" },
+              { label: "Confirm New Password", value: confirmPassword, set: setConfirmPassword, auto: "new-password" },
+            ].map(({ label, value, set, auto }) => (
+              <div key={label}>
+                <label className="block text-xs text-slate-400 mb-1.5">{label}</label>
+                <input
+                  type="password"
+                  value={value}
+                  onChange={(e) => set(e.target.value)}
+                  autoComplete={auto}
+                  placeholder="••••••••"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none transition-colors"
+                />
+              </div>
+            ))}
+            {pwError && <p className="text-xs text-red-400 bg-red-900/20 border border-red-800/30 rounded-lg px-3 py-2">{pwError}</p>}
+            {pwSuccess && <p className="text-xs text-emerald-400 bg-emerald-900/20 border border-emerald-800/30 rounded-lg px-3 py-2">{pwSuccess}</p>}
+            <button
+              type="submit"
+              disabled={pwLoading}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-50 text-[#040d1a] text-sm font-semibold transition-colors"
+            >
+              {pwLoading ? <Loader2 size={14} className="animate-spin" /> : <KeyRound size={14} />}
+              {pwLoading ? "Updating..." : "Update Password"}
+            </button>
+          </form>
         </div>
 
         {/* About */}
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-3">About</h3>
           <div className="space-y-2 text-xs text-slate-500 font-mono">
-            <div className="flex justify-between">
-              <span>Platform</span><span className="text-slate-400">FeTo Enterprise</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Backend Build</span><span className="text-slate-400">v3.0-AD</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Agents</span><span className="text-slate-400">10</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Commands</span><span className="text-slate-400">87</span>
-            </div>
-            <div className="flex justify-between">
-              <span>CBE Framework</span><span className="text-slate-400">Embedded</span>
-            </div>
+            {[
+              ["Platform", "FeTo Enterprise"],
+              ["Backend Build", "v3.0-AE"],
+              ["Agents", "10"],
+              ["Commands", "87"],
+              ["CBE Framework", "Embedded"],
+              ["Auth", "JWT + Supabase"],
+            ].map(([k, v]) => (
+              <div key={k} className="flex justify-between">
+                <span>{k}</span><span className="text-slate-400">{v}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#d4a843] hover:bg-[#c49a2a] text-[#040d1a] text-sm font-semibold transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/30 text-slate-300 text-sm font-medium transition-colors"
         >
-          {saved ? <CheckCircle size={14} /> : <Save size={14} />}
-          {saved ? "Saved" : "Save Changes"}
+          {saved ? <CheckCircle size={14} className="text-emerald-400" /> : <Save size={14} />}
+          {saved ? "Saved" : "Save Settings"}
         </button>
       </div>
     </div>

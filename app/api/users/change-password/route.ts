@@ -26,8 +26,7 @@ export async function POST(req: NextRequest) {
     if (!ok) return NextResponse.json({ success: false, error: "Failed to update password" }, { status: 500 });
 
     return NextResponse.json({ success: true, message: "Password updated successfully" });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Failed to change password";
-    return NextResponse.json({ success: false, error: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: "Failed to change password" }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 
-const BACKEND_URL = process.env.BACKEND_API_URL || "https://feto-agent-production.up.railway.app";
+const BACKEND_URL = "https://feto-agent-production.up.railway.app";
 const API_KEY = process.env.BACKEND_API_KEY || "";
 
 export async function GET() {

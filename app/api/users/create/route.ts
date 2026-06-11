@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getSession, createUser, getUserByEmail } from "@/lib/auth";
+import { logAdminAction } from "@/lib/auditLog";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,11 +29,23 @@ export async function POST(req: NextRequest) {
     if (password.length < 8) {
       return NextResponse.json({ success: false, error: "Password must be at least 8 characters" }, { status: 400 });
     }
+    const strongPw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!strongPw.test(password)) {
+      return NextResponse.json({ success: false, error: "Password must contain uppercase, lowercase, and a number" }, { status: 400 });
+    }
 
     const passwordHash = await bcrypt.hash(password, 12);
     const finalRole = allowedRoles.includes(role) ? role : "user";
     const newUser = await createUser(email.toLowerCase().trim(), name, passwordHash, finalRole);
 
+    await logAdminAction({
+      action: "user.create",
+      actor_id: session.id,
+      actor_email: session.email,
+      target_id: newUser.id,
+      target_email: newUser.email,
+      metadata: { role: finalRole },
+    });
     return NextResponse.json({
       success: true,
       user: { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role },

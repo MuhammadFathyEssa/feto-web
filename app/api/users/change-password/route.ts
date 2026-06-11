@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
     if (newPassword.length < 8) {
       return NextResponse.json({ success: false, error: "New password must be at least 8 characters" }, { status: 400 });
     }
+    const strongPw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!strongPw.test(newPassword)) {
+      return NextResponse.json({ success: false, error: "Password must contain uppercase, lowercase, and a number" }, { status: 400 });
+    }
 
     const user = await getUserById(session.id);
     if (!user) return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });

@@ -37,8 +37,7 @@ export async function POST(req: NextRequest) {
       success: true,
       user: { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role },
     });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Failed to create user";
-    return NextResponse.json({ success: false, error: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: "Failed to create user" }, { status: 500 });
   }
 }

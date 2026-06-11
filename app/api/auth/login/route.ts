@@ -1,8 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getUserByEmail, signToken, updateLastLogin, COOKIE_NAME } from "@/lib/auth";
+import { checkRateLimit, resetRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
+  // Rate limit by client IP — 5 attempts / 15 min
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+  const rl = checkRateLimit(`login:${ip}`);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { success: false, error: "Too many attempts. Try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
+  }
+
   try {
     const { email, password } = await req.json();
 
@@ -30,6 +44,7 @@ export async function POST(req: NextRequest) {
 
     const token = await signToken(sessionUser);
     await updateLastLogin(user.id);
+    resetRateLimit(`login:${ip}`);
 
     const res = NextResponse.json({ success: true, user: sessionUser });
     res.cookies.set(COOKIE_NAME, token, {
@@ -41,8 +56,7 @@ export async function POST(req: NextRequest) {
     });
 
     return res;
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : "Login failed";
-    return NextResponse.json({ success: false, error: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: "Login failed" }, { status: 500 });
   }
 }

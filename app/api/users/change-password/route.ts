@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getSession, getUserById, updatePassword } from "@/lib/auth";
+import { logAdminAction } from "@/lib/auditLog";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,6 +29,12 @@ export async function POST(req: NextRequest) {
     const newHash = await bcrypt.hash(newPassword, 12);
     const ok = await updatePassword(session.id, newHash);
     if (!ok) return NextResponse.json({ success: false, error: "Failed to update password" }, { status: 500 });
+
+    await logAdminAction({
+      action: "user.password_reset",
+      actor_id: session.id,
+      actor_email: session.email,
+    });
 
     return NextResponse.json({ success: true, message: "Password updated successfully" });
   } catch {

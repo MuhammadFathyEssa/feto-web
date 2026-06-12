@@ -35,19 +35,26 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("x-user-email", session.email);
   requestHeaders.set("x-user-role", session.role);
 
-  // Sliding session — re-issue token with refreshed activity timestamp
   const res = NextResponse.next({ request: { headers: requestHeaders } });
-  const freshToken = await refreshActivity(session);
-  res.cookies.set(COOKIE_NAME, freshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 8 * 60 * 60,
-  });
+
+  // Sliding session — F-08: only re-issue the cookie when enough time has
+  // elapsed since last activity (avoids signing a JWT on every request).
+  const REFRESH_THROTTLE_MS = 2 * 60 * 1000;
+  const lastActivity = session.lastActivity || 0;
+  if (Date.now() - lastActivity > REFRESH_THROTTLE_MS) {
+    const freshToken = await refreshActivity(session);
+    res.cookies.set(COOKIE_NAME, freshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 8 * 60 * 60,
+    });
+  }
   return res;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // F-08: exclude static assets and common public files from the matcher
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)"],
 };

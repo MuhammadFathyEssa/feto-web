@@ -9,7 +9,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const [saved, setSaved] = useState(false);
   const [apiUrl] = useState(
-    process.env.NEXT_PUBLIC_API_URL || "https://feto-agent-production.up.railway.app"
+    "(configured server-side)"
   );
 
   // Change password state
@@ -86,7 +86,7 @@ export default function SettingsPage() {
               readOnly
               className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] text-sm text-slate-400 outline-none font-mono"
             />
-            <p className="text-xs text-slate-600 mt-1">Configured via NEXT_PUBLIC_API_URL on Vercel.</p>
+            <p className="text-xs text-slate-600 mt-1">Configured via BACKEND_URL on Vercel (server-side only).</p>
           </div>
         </div>
 

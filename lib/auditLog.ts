@@ -1,4 +1,4 @@
-// Frontend admin action audit log — writes to Supabase ai_audit_log
+// Frontend admin action audit log — dedicated admin_audit_log table (F-09 fix)
 // Covers: user creation, deletion, role change, password reset
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -19,12 +19,16 @@ export interface AuditEntry {
   target_id?: string;
   target_email?: string;
   metadata?: Record<string, unknown>;
+  ip_address?: string;
 }
 
 export async function logAdminAction(entry: AuditEntry): Promise<void> {
-  if (!SUPABASE_URL || !SUPABASE_KEY) return;
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.error("[AuditLog] CRITICAL: Supabase not configured — admin action NOT recorded:", entry.action);
+    return;
+  }
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/ai_audit_log`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/admin_audit_log`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,22 +37,22 @@ export async function logAdminAction(entry: AuditEntry): Promise<void> {
         Prefer: "return=minimal",
       },
       body: JSON.stringify({
-        user_id: entry.actor_id,
+        timestamp: new Date().toISOString(),
+        actor_id: entry.actor_id,
+        actor_email: entry.actor_email,
         action: entry.action,
-        prompt: JSON.stringify({
-          actor_email: entry.actor_email,
-          target_id: entry.target_id,
-          target_email: entry.target_email,
-          metadata: entry.metadata,
-        }),
-        engine: "admin_panel",
-        model: "N/A",
-        risk_score: 0,
-        created_at: new Date().toISOString(),
+        target_id: entry.target_id ?? null,
+        target_email: entry.target_email ?? null,
+        metadata: entry.metadata ?? {},
+        ip_address: entry.ip_address ?? null,
+        result: "success",
       }),
     });
-  } catch {
-    // Audit log failure must never block the operation — silent fail
-    console.error("[AuditLog] Failed to write admin action:", entry.action);
+    if (!res.ok) {
+      // F-09 fix: audit write failure is loud, never silent
+      console.error("[AuditLog] WRITE FAILED — admin action may not be recorded:", entry.action, res.status);
+    }
+  } catch (e) {
+    console.error("[AuditLog] WRITE FAILED — admin action may not be recorded:", entry.action, e);
   }
 }

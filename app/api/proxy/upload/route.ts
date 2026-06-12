@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 
-const BACKEND_URL = "https://feto-agent-production.up.railway.app";
+const BACKEND_URL = process.env.BACKEND_URL || "";
 const API_KEY = process.env.BACKEND_API_KEY || "";
 
 export const runtime = "nodejs";
@@ -10,7 +10,7 @@ export const maxDuration = 60;
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });
-  if (!API_KEY) return NextResponse.json({ success: false, error: "Service misconfigured" }, { status: 503 });
+  if (!API_KEY || !BACKEND_URL) return NextResponse.json({ success: false, error: "Service misconfigured" }, { status: 503 });
 
   try {
     const form = await req.formData();

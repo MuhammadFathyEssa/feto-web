@@ -17,25 +17,41 @@ export interface SessionUser {
   email: string;
   name: string;
   role: "owner" | "admin" | "user" | "readonly";
+  lastActivity?: number;
 }
+
+// Idle timeout: re-login required after this many minutes of inactivity
+export const IDLE_TIMEOUT_MINUTES = Number(process.env.IDLE_TIMEOUT_MINUTES || 15);
+const IDLE_TIMEOUT_MS = IDLE_TIMEOUT_MINUTES * 60 * 1000;
 
 // ── JWT ──────────────────────────────────────────────────────
 
 export async function signToken(user: SessionUser): Promise<string> {
-  return new SignJWT({ ...user })
+  return new SignJWT({ ...user, lastActivity: Date.now() })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("4h")
+    .setExpirationTime("8h") // absolute cap; idle timeout enforced separately
     .sign(JWT_SECRET);
 }
 
 export async function verifyToken(token: string): Promise<SessionUser | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload as unknown as SessionUser;
+    const user = payload as unknown as SessionUser;
+    // Enforce idle timeout — reject if inactive too long
+    if (user.lastActivity && Date.now() - user.lastActivity > IDLE_TIMEOUT_MS) {
+      return null;
+    }
+    return user;
   } catch {
     return null;
   }
+}
+
+// Re-issue a token with refreshed activity timestamp (sliding session)
+export async function refreshActivity(user: SessionUser): Promise<string> {
+  const { lastActivity: _drop, ...rest } = user;
+  return signToken(rest as SessionUser);
 }
 
 export async function getSession(): Promise<SessionUser | null> {

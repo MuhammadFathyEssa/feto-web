@@ -21,6 +21,12 @@ const config: Config = {
           500: "#c49a2a",
           600: "#a07d1a",
         },
+        // Secondary accent — used for success/info/positive states (complements gold)
+        teal: {
+          400: "#3db4a6",
+          500: "#2e9e90",
+          600: "#1f7d72",
+        },
         surface: {
           900: "#0a0f1e",
           800: "#111827",
@@ -28,6 +34,12 @@ const config: Config = {
           600: "#242d42",
           500: "#2e3a52",
         },
+      },
+      boxShadow: {
+        // 3-level elevation scale for depth
+        "elev-1": "0 1px 2px rgba(0,0,0,0.25)",
+        "elev-2": "0 4px 12px rgba(0,0,0,0.35)",
+        "elev-3": "0 12px 32px rgba(0,0,0,0.45)",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],

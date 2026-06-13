@@ -8,7 +8,7 @@ import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
   Shield, ChevronDown, Bot, User, AlertCircle, Loader2,
   Menu, X, LogOut, Users, Zap, Paperclip, Mic, MicOff,
-  FileText, Image, StopCircle, Download, Copy
+  FileText, Image, StopCircle, Download, Copy, RotateCcw
 } from "lucide-react";
 import Link from "next/link";
 
@@ -56,7 +56,7 @@ function TypingIndicator() {
   );
 }
 
-function MessageBubble({ message }: { message: Message }) {
+function MessageBubble({ message, onRegenerate, isLastAssistant }: { message: Message; onRegenerate?: () => void; isLastAssistant?: boolean }) {
   const isUser = message.role === "user";
   return (
     <div className={`flex gap-3 px-4 py-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
@@ -95,6 +95,15 @@ function MessageBubble({ message }: { message: Message }) {
               className="text-slate-600 hover:text-[#d4a843] transition-colors"
               title="نسخ">
               <Copy size={13} />
+            </button>
+          )}
+          {!isUser && !message.error && message.content && isLastAssistant && onRegenerate && (
+            <button
+              aria-label="إعادة توليد الرد"
+              onClick={onRegenerate}
+              className="text-slate-600 hover:text-[#d4a843] transition-colors"
+              title="إعادة التوليد">
+              <RotateCcw size={13} />
             </button>
           )}
           <span className="text-xs text-slate-600">
@@ -331,6 +340,35 @@ export default function ChatPage() {
     }
   }, [input, attachedFile, loading, addMessage, sendWithFile, revealMessage, updateMessageContent]);
 
+  // Regenerate: resend the most recent user text message and append a new reply
+  const regenerate = useCallback(async () => {
+    if (loading) return;
+    const conv = conversations.find((c) => c.id === activeId);
+    const msgs = conv?.messages || [];
+    const lastUser = [...msgs].reverse().find((m) => m.role === "user");
+    if (!lastUser) return;
+    const text = lastUser.content.replace(/^📎[^\n]*\n?/, "").trim();
+    if (!text) return;
+    setLoading(true);
+    try {
+      const data = await sendMessage(text);
+      const d = data as { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string; downloadUrl?: string };
+      const fullContent = d.success ? (d.reply || d.response || "No response") : (d.error || "Request failed");
+      const assistantId = (Date.now() + 1).toString();
+      addMessage({
+        id: assistantId, role: "assistant", content: "",
+        agentType: d.agent || d.agentType || "general", timestamp: new Date(),
+        error: !d.success, downloadUrl: d.downloadUrl,
+      });
+      if (d.success) await revealMessage(assistantId, fullContent);
+      else updateMessageContent(assistantId, fullContent);
+    } catch (err) {
+      addMessage({ id: (Date.now() + 1).toString(), role: "assistant", content: err instanceof Error ? err.message : "Connection failed", timestamp: new Date(), error: true });
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, conversations, activeId, addMessage, revealMessage, updateMessageContent]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
@@ -406,7 +444,7 @@ export default function ChatPage() {
               <ChevronDown size={12} className="text-slate-500" />
             </button>
             {agentDropdown && (
-              <div className="absolute top-full left-0 mt-1 w-56 bg-[#0d2144] border border-[#1a2235] rounded-xl shadow-2xl z-10 py-1 max-h-72 overflow-y-auto">
+              <div className="absolute top-full left-0 mt-1 w-56 bg-[#0d2144] border border-[#1a2235] rounded-xl shadow-elev-2 z-10 py-1 max-h-72 overflow-y-auto">
                 {agentOptions.map((a) => (
                   <button key={a.id} onClick={() => { setSelectedAgent(a.id); setAgentDropdown(false); }}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[#143060] ${selectedAgent === a.id ? "text-[#d4a843]" : "text-slate-300"}`}>
@@ -444,7 +482,14 @@ export default function ChatPage() {
             </div>
           ) : (
             <div className="py-2">
-              {activeConv.messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)}
+              {activeConv.messages.map((msg, i) => (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  onRegenerate={regenerate}
+                  isLastAssistant={msg.role === "assistant" && i === activeConv.messages.length - 1 && !loading}
+                />
+              ))}
               {loading && <TypingIndicator />}
               <div ref={messagesEndRef} />
             </div>

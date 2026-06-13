@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
       // userId derived from the authenticated session — NOT from the client
-      body: JSON.stringify({ userId: session.id, message }),
+      body: JSON.stringify({ userId: session.id, message, userName: session.name }),
     });
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });

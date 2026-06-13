@@ -325,6 +325,7 @@ export default function ChatPage() {
         <div className="border-t border-[#0d2144] p-3 space-y-1">
           {[
             { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+            { href: "/recruiter", icon: Users, label: "Recruiter" },
             { href: "/admin", icon: Users, label: "Admin" },
             { href: "/settings", icon: Settings, label: "Settings" },
           ].map(({ href, icon: Icon, label }) => (

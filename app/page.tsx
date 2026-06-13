@@ -59,7 +59,7 @@ function TypingIndicator() {
 function MessageBubble({ message, onRegenerate, isLastAssistant }: { message: Message; onRegenerate?: () => void; isLastAssistant?: boolean }) {
   const isUser = message.role === "user";
   return (
-    <div className={`flex gap-3 px-4 py-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
+    <div className={`anim-message flex gap-3 px-4 py-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
         isUser ? "bg-[#1a3f7c] border border-[#143060]" : "bg-[#d4a843]/20 border border-[#d4a843]/40"
       }`}>
@@ -444,7 +444,7 @@ export default function ChatPage() {
               <ChevronDown size={12} className="text-slate-500" />
             </button>
             {agentDropdown && (
-              <div className="absolute top-full left-0 mt-1 w-56 bg-[#0d2144] border border-[#1a2235] rounded-xl shadow-elev-2 z-10 py-1 max-h-72 overflow-y-auto">
+              <div className="anim-scale absolute top-full left-0 mt-1 w-56 bg-[#0d2144] border border-[#1a2235] rounded-xl shadow-elev-2 z-10 py-1 max-h-72 overflow-y-auto">
                 {agentOptions.map((a) => (
                   <button key={a.id} onClick={() => { setSelectedAgent(a.id); setAgentDropdown(false); }}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[#143060] ${selectedAgent === a.id ? "text-[#d4a843]" : "text-slate-300"}`}>
@@ -463,7 +463,7 @@ export default function ChatPage() {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto">
           {activeConv.messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full gap-6 px-4">
+            <div className="anim-fade flex flex-col items-center justify-center h-full gap-6 px-4">
               <div className="w-14 h-14 rounded-2xl bg-[#d4a843]/10 border border-[#d4a843]/30 flex items-center justify-center">
                 <Shield size={24} className="text-[#d4a843]" />
               </div>
@@ -474,7 +474,7 @@ export default function ChatPage() {
               <div className="grid grid-cols-2 gap-2 w-full max-w-md">
                 {["What is Zero Trust Architecture?", "Explain CBE cybersecurity framework", "Ransomware response playbook", "T24 core banking best practices"].map((q) => (
                   <button key={q} onClick={() => setInput(q)}
-                    className="text-left px-3 py-2.5 rounded-xl text-xs text-slate-400 bg-[#071428] border border-[#0d2144] hover:border-[#d4a843]/30 hover:text-slate-300 transition-colors leading-relaxed">
+                    className="text-left px-3 py-2.5 rounded-xl text-xs text-slate-400 bg-[#071428] border border-[#0d2144] hover:border-[#d4a843]/30 hover:text-slate-300 hover:-translate-y-0.5 transition-all duration-150 leading-relaxed">
                     {q}
                   </button>
                 ))}

@@ -68,13 +68,13 @@ export default function CommandPalette({ onNewChat }: { onNewChat?: () => void }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/50 backdrop-blur-sm"
+      className="anim-fade fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/50 backdrop-blur-sm"
       onClick={() => setOpen(false)}
       role="dialog"
       aria-modal="true"
       aria-label="لوحة الأوامر">
       <div
-        className="w-full max-w-lg mx-4 bg-[#071428] border border-[#1a3f7c]/50 rounded-2xl shadow-elev-3 overflow-hidden"
+        className="anim-scale w-full max-w-lg mx-4 bg-[#071428] border border-[#1a3f7c]/50 rounded-2xl shadow-elev-3 overflow-hidden"
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 px-4 py-3 border-b border-[#0d2144]">
           <Search size={16} className="text-slate-500" />

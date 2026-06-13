@@ -147,4 +147,33 @@ export async function updateLastLogin(userId: string) {
   }).catch(() => {});
 }
 
+// Update a user's role (admin action)
+export async function updateUserRole(userId: string, role: string): Promise<boolean> {
+  const res = await supabaseQuery(`feto_users?id=eq.${encodeURIComponent(userId)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ role }),
+  });
+  return res.ok;
+}
+
+// Update a user's password (admin reset). Caller passes the bcrypt hash.
+export async function updateUserPasswordHash(userId: string, passwordHash: string): Promise<boolean> {
+  const res = await supabaseQuery(`feto_users?id=eq.${encodeURIComponent(userId)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ password_hash: passwordHash }),
+  });
+  return res.ok;
+}
+
+// Delete a user (admin action)
+export async function deleteUser(userId: string): Promise<boolean> {
+  const res = await supabaseQuery(`feto_users?id=eq.${encodeURIComponent(userId)}`, {
+    method: "DELETE",
+    headers: { Prefer: "return=minimal" },
+  });
+  return res.ok;
+}
+
 export { COOKIE_NAME };

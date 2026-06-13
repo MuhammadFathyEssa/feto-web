@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken, refreshActivity, COOKIE_NAME } from "@/lib/auth";
 
 const PUBLIC_PATHS = ["/login", "/api/auth/login"];
+// Pages + APIs only owner/admin may reach
+const ADMIN_PATHS = ["/admin", "/dashboard", "/api/users"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -34,6 +36,15 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("x-user-id", session.id);
   requestHeaders.set("x-user-email", session.email);
   requestHeaders.set("x-user-role", session.role);
+
+  // Admin-only gating: non-admins are bounced. Pages → redirect home, APIs → 403.
+  const isAdmin = session.role === "owner" || session.role === "admin";
+  if (!isAdmin && ADMIN_PATHS.some((p) => pathname.startsWith(p))) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ success: false, error: "Forbidden — admin only" }, { status: 403 });
+    }
+    return NextResponse.redirect(new URL("/", req.url));
+  }
 
   const res = NextResponse.next({ request: { headers: requestHeaders } });
 

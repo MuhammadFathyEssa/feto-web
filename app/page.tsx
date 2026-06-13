@@ -102,6 +102,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string>("user");
   const [selectedAgent, setSelectedAgent] = useState("auto");
   const [agentDropdown, setAgentDropdown] = useState(false);
 
@@ -118,6 +119,13 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const activeConv = conversations.find((c) => c.id === activeId)!;
+
+  // Resolve role for conditional admin navigation
+  useEffect(() => {
+    fetch("/api/auth/me").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.success && d.user?.role) setUserRole(d.user.role);
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -324,11 +332,12 @@ export default function ChatPage() {
         </div>
         <div className="border-t border-[#0d2144] p-3 space-y-1">
           {[
-            { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-            { href: "/recruiter", icon: Users, label: "Recruiter" },
-            { href: "/admin", icon: Users, label: "Admin" },
-            { href: "/settings", icon: Settings, label: "Settings" },
-          ].map(({ href, icon: Icon, label }) => (
+            { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
+            { href: "/recruiter", icon: Users, label: "Recruiter", adminOnly: false },
+            { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
+            { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
+          ].filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner")
+            .map(({ href, icon: Icon, label }) => (
             <Link key={href} href={href} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-[#0d2144] hover:text-slate-300 transition-colors">
               <Icon size={14} />{label}
             </Link>

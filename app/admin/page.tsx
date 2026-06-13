@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Shield, Users, Activity, Lock, Plus, Loader2, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, Shield, Users, Activity, Lock, Plus, Loader2, CheckCircle, X, Trash2, Pencil, KeyRound } from "lucide-react";
 
 interface User { id: string; email: string; name: string; role: string; last_login?: string; created_at?: string; }
 
@@ -26,14 +26,53 @@ export default function AdminPage() {
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState("");
   const [createSuccess, setCreateSuccess] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [actionMsg, setActionMsg] = useState("");
 
-  useEffect(() => {
+  const loadUsers = () => {
     fetch("/api/users/list")
       .then((r) => r.json())
       .then((d) => { if (d.success) setUsers(d.users); })
       .catch(() => {})
       .finally(() => setLoadingUsers(false));
-  }, []);
+  };
+
+  useEffect(() => { loadUsers(); }, []);
+
+  const changeRole = async (userId: string, role: string) => {
+    setActionMsg("");
+    const res = await fetch("/api/users/update", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, role }),
+    });
+    const d = await res.json();
+    if (!d.success) { setActionMsg(d.error || "Update failed"); return; }
+    setEditingId(null); loadUsers();
+  };
+
+  const resetPassword = async (userId: string, email: string) => {
+    const pw = window.prompt(`كلمة سر جديدة لـ ${email} (8+ حرف، حروف كبيرة وصغيرة ورقم):`);
+    if (!pw) return;
+    setActionMsg("");
+    const res = await fetch("/api/users/update", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, password: pw }),
+    });
+    const d = await res.json();
+    setActionMsg(d.success ? "تم تغيير كلمة السر." : (d.error || "Password reset failed"));
+  };
+
+  const removeUser = async (userId: string, email: string) => {
+    if (!window.confirm(`متأكد إنك عايز تحذف ${email}؟ الإجراء ده نهائي.`)) return;
+    setActionMsg("");
+    const res = await fetch("/api/users/delete", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    const d = await res.json();
+    if (!d.success) { setActionMsg(d.error || "Delete failed"); return; }
+    loadUsers();
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +89,7 @@ export default function AdminPage() {
       if (!data.success) { setCreateError(data.error || "Failed"); }
       else {
         setCreateSuccess(`User ${data.user.name} created`);
-        setUsers((prev) => [...prev, data.user]);
+        loadUsers();
         setNewEmail(""); setNewName(""); setNewPassword(""); setNewRole("user");
         setTimeout(() => { setShowCreate(false); setCreateSuccess(""); }, 2000);
       }
@@ -94,6 +133,7 @@ export default function AdminPage() {
           <div className="px-5 py-4 border-b border-[#0d2144] flex items-center justify-between">
             <h3 className="text-sm font-medium text-slate-300 flex items-center gap-2">
               <Users size={14} className="text-[#d4a843]" /> Users
+              {actionMsg && <span className="text-xs text-[#d4a843] font-normal">· {actionMsg}</span>}
             </h3>
             <button
               onClick={() => setShowCreate(!showCreate)}
@@ -163,7 +203,7 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#0d2144]">
-                    {["Name", "Email", "Role", "Last Login", "Created"].map((h) => (
+                    {["Name", "Email", "Role", "Last Login", "Created", "Actions"].map((h) => (
                       <th key={h} className="text-left px-5 py-3 text-xs text-slate-500 font-medium">{h}</th>
                     ))}
                   </tr>
@@ -174,15 +214,34 @@ export default function AdminPage() {
                       <td className="px-5 py-3 text-slate-300 font-medium">{u.name}</td>
                       <td className="px-5 py-3 text-slate-400 text-xs font-mono">{u.email}</td>
                       <td className="px-5 py-3">
-                        <span className={`px-2 py-0.5 rounded text-xs border font-mono ${roleColors[u.role] || roleColors.user}`}>
-                          {u.role}
-                        </span>
+                        {editingId === u.id ? (
+                          <select defaultValue={u.role} onChange={(e) => changeRole(u.id, e.target.value)}
+                            className="bg-[#0d2144] border border-[#1a3f7c] rounded px-2 py-1 text-xs text-slate-200">
+                            <option value="admin">admin</option>
+                            <option value="user">user</option>
+                            <option value="readonly">readonly</option>
+                          </select>
+                        ) : (
+                          <span className={`px-2 py-0.5 rounded text-xs border font-mono ${roleColors[u.role] || roleColors.user}`}>
+                            {u.role}
+                          </span>
+                        )}
                       </td>
                       <td className="px-5 py-3 text-slate-500 text-xs">
                         {u.last_login ? new Date(u.last_login).toLocaleDateString() : "Never"}
                       </td>
                       <td className="px-5 py-3 text-slate-500 text-xs">
                         {u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setEditingId(editingId === u.id ? null : u.id)} title="تغيير الدور"
+                            className="text-slate-500 hover:text-[#d4a843] transition-colors"><Pencil size={14} /></button>
+                          <button onClick={() => resetPassword(u.id, u.email)} title="تغيير كلمة السر"
+                            className="text-slate-500 hover:text-blue-400 transition-colors"><KeyRound size={14} /></button>
+                          <button onClick={() => removeUser(u.id, u.email)} title="حذف"
+                            className="text-slate-500 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
+                        </div>
                       </td>
                     </tr>
                   ))}

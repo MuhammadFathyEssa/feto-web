@@ -152,6 +152,16 @@ export default function SettingsPage() {
           {saved ? <CheckCircle size={14} className="text-emerald-400" /> : <Save size={14} />}
           {saved ? "Saved" : "Save Settings"}
         </button>
+
+        <div className="mt-8 pt-6 border-t border-[#0d2144]">
+          <div className="flex items-start gap-3 text-xs text-slate-500 leading-relaxed">
+            <Shield size={14} className="text-[#d4a843] mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-slate-400 font-medium mb-1">الأمان والخصوصية</p>
+              <p>اتصالك مع فيتو مُشفّر بالكامل. الوصول مُتحكَّم فيه بالأدوار (RBAC)، وكل بياناتك معزولة عن باقي المستخدمين. الإجراءات الإدارية مُسجّلة للمساءلة.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -148,6 +148,19 @@ export default function ChatPage() {
     }).catch(() => {});
   }, []);
 
+  // Personalization: restore the last-used agent on load
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("feto:lastAgent");
+      if (saved) setSelectedAgent(saved);
+    } catch { /* localStorage unavailable */ }
+  }, []);
+
+  // Persist agent choice whenever it changes
+  useEffect(() => {
+    try { localStorage.setItem("feto:lastAgent", selectedAgent); } catch { /* ignore */ }
+  }, [selectedAgent]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeConv?.messages, loading]);
@@ -189,11 +202,14 @@ export default function ChatPage() {
   }, [activeId]);
 
   // Reveal assistant text word-by-word for a streaming-like feel (no backend change).
+  const revealCancelRef = useRef(false);
   const revealMessage = useCallback(async (id: string, full: string) => {
+    revealCancelRef.current = false;
     const words = full.split(" ");
     let acc = "";
     const step = words.length > 120 ? 3 : 1; // longer answers reveal faster
     for (let i = 0; i < words.length; i += step) {
+      if (revealCancelRef.current) break; // stop requested → show full text now
       acc = words.slice(0, i + step).join(" ");
       updateMessageContent(id, acc);
       await new Promise((r) => setTimeout(r, 16));
@@ -557,9 +573,12 @@ export default function ChatPage() {
             </div>
 
             {/* Send button */}
-            <button aria-label="إرسال الرسالة" onClick={handleSend} disabled={(!input.trim() && !attachedFile) || loading || isRecording}
+            <button
+              aria-label={loading ? "إيقاف" : "إرسال الرسالة"}
+              onClick={loading ? () => { revealCancelRef.current = true; } : handleSend}
+              disabled={(!input.trim() && !attachedFile) && !loading || isRecording}
               className="w-10 h-10 rounded-xl bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0">
-              {loading ? <Loader2 size={16} className="text-[#040d1a] animate-spin" /> : <Send size={16} className="text-[#040d1a]" />}
+              {loading ? <StopCircle size={16} className="text-[#040d1a]" /> : <Send size={16} className="text-[#040d1a]" />}
             </button>
           </div>
 

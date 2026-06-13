@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Shield, Eye, EyeOff, Loader2, Lock } from "lucide-react";
 
 function LoginInner() {
   const router = useRouter();
@@ -107,6 +107,10 @@ function LoginInner() {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
+        <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-600">
+          <Lock size={11} />
+          <span>اتصال مُشفّر · وصول مُتحكَّم فيه بالأدوار</span>
+        </div>
         <p className="text-center text-xs text-slate-600 mt-6">
           Banque Du Caire · Technology Services &amp; IT Operations
         </p>

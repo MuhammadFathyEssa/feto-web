@@ -101,7 +101,28 @@ function EvaluateCV() {
           <span className="text-xs text-slate-600">سيتم تحليلها وإنشاء تقرير تقييم شامل</span>
         </button>
       )}
-      {loading && <div className="py-16 flex flex-col items-center gap-3 text-slate-400"><Loader2 className="animate-spin text-[#d4a843]" size={28} /><span className="text-sm">بحلّل السيرة الذاتية...</span></div>}
+      {loading && (
+        <div className="py-6">
+          <div className="flex items-center gap-2 text-slate-400 mb-5">
+            <Loader2 className="animate-spin text-[#d4a843]" size={18} />
+            <span className="text-sm">بحلّل السيرة الذاتية...</span>
+          </div>
+          <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-6 animate-pulse">
+            <div className="flex items-center gap-8 mb-6 pb-6 border-b border-[#0d2144]">
+              <div className="w-20 h-20 rounded-full bg-[#0d2144]" />
+              <div className="w-20 h-20 rounded-full bg-[#0d2144]" />
+            </div>
+            <div className="space-y-3">
+              <div className="h-3 bg-[#0d2144] rounded w-1/3" />
+              <div className="h-2.5 bg-[#0d2144]/70 rounded w-full" />
+              <div className="h-2.5 bg-[#0d2144]/70 rounded w-5/6" />
+              <div className="h-3 bg-[#0d2144] rounded w-1/4 mt-5" />
+              <div className="h-2.5 bg-[#0d2144]/70 rounded w-full" />
+              <div className="h-2.5 bg-[#0d2144]/70 rounded w-4/6" />
+            </div>
+          </div>
+        </div>
+      )}
       {err && <div className="mt-3 flex items-center gap-2 text-red-400 text-sm bg-red-900/20 border border-red-800/40 rounded-lg px-4 py-3"><AlertCircle size={16} />{err}</div>}
       {e && (
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-6">

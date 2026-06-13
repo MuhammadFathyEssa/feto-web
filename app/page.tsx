@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { sendMessage, defaultAgents } from "@/lib/api";
+import CommandPalette from "./components/CommandPalette";
 import type { Message, Conversation } from "@/types";
 import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
@@ -338,6 +339,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen bg-[#040d1a] overflow-hidden">
+      <CommandPalette onNewChat={newConversation} />
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:bg-[#d4a843] focus:text-[#040d1a] focus:px-3 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium">تخطّي إلى المحتوى</a>
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/60 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />
@@ -357,6 +359,7 @@ export default function ChatPage() {
         <div className="p-3">
           <button onClick={newConversation} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/30 transition-colors">
             <Plus size={14} className="text-[#d4a843]" /> New conversation
+            <kbd className="ml-auto text-[10px] text-slate-600 border border-[#1a2235] rounded px-1.5 py-0.5">⌘K</kbd>
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-1">

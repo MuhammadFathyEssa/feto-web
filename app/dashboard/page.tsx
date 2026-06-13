@@ -202,7 +202,7 @@ export default function DashboardPage() {
         {/* Quick actions */}
         <div className="flex flex-wrap gap-3">
           <Link
-            href="/chat"
+            href="/"
             className="flex items-center gap-2 bg-[#d4a843] text-[#040d1a] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#e0b855] transition-colors"
           >
             <MessageSquare size={15} /> Open Chat

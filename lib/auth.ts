@@ -20,8 +20,10 @@ export interface SessionUser {
   lastActivity?: number;
 }
 
-// Idle timeout: re-login required after this many minutes of inactivity
-export const IDLE_TIMEOUT_MINUTES = Number(process.env.IDLE_TIMEOUT_MINUTES || 15);
+// Idle timeout: re-login required after this many minutes of inactivity.
+// Default 12h — an executive copilot should survive meetings, tab closes,
+// and a full working day without forcing re-login. Override via env if stricter posture needed.
+export const IDLE_TIMEOUT_MINUTES = Number(process.env.IDLE_TIMEOUT_MINUTES || 720);
 const IDLE_TIMEOUT_MS = IDLE_TIMEOUT_MINUTES * 60 * 1000;
 
 // ── JWT ──────────────────────────────────────────────────────
@@ -30,7 +32,7 @@ export async function signToken(user: SessionUser): Promise<string> {
   return new SignJWT({ ...user, lastActivity: Date.now() })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("8h") // absolute cap; idle timeout enforced separately
+    .setExpirationTime("7d") // absolute cap; idle timeout (12h) is the practical gate
     .sign(JWT_SECRET);
 }
 

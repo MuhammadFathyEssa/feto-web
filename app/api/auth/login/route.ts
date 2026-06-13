@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 4, // 4 hours
+      maxAge: 60 * 60 * 24 * 7, // 7 days (idle timeout is the real gate)
       path: "/",
     });
 

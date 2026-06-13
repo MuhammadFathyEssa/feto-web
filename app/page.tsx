@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { sendMessage, defaultAgents } from "@/lib/api";
 import CommandPalette from "./components/CommandPalette";
+import Onboarding from "./components/Onboarding";
 import type { Message, Conversation } from "@/types";
 import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
@@ -394,6 +395,7 @@ export default function ChatPage() {
   return (
     <div className="flex h-screen bg-[#040d1a] overflow-hidden">
       <CommandPalette onNewChat={newConversation} />
+      <Onboarding />
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:bg-[#d4a843] focus:text-[#040d1a] focus:px-3 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium">تخطّي إلى المحتوى</a>
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/60 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />
@@ -480,8 +482,11 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto">
           {activeConv.messages.length === 0 ? (
             <div className="anim-fade flex flex-col items-center justify-center h-full gap-6 px-4">
-              <div className="w-14 h-14 rounded-2xl bg-[#d4a843]/10 border border-[#d4a843]/30 flex items-center justify-center">
-                <Shield size={24} className="text-[#d4a843]" />
+              <div className="relative w-16 h-16 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-2xl bg-[#d4a843]/25 blur-2xl animate-pulse" />
+                <div className="relative w-14 h-14 rounded-2xl bg-[#d4a843]/10 border border-[#d4a843]/30 flex items-center justify-center">
+                  <Shield size={24} className="text-[#d4a843]" />
+                </div>
               </div>
               <div className="text-center">
                 <h2 className="text-lg font-semibold text-slate-200">FeTo Enterprise AI</h2>

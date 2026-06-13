@@ -81,7 +81,7 @@ function MessageBubble({ message }: { message: Message }) {
         </div>
         {message.agentType && !isUser && <AgentBadge agentType={message.agentType} />}
         <span className="text-xs text-slate-600">
-          {message.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+          {(message.timestamp instanceof Date ? message.timestamp : new Date(message.timestamp)).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
         </span>
       </div>
     </div>
@@ -162,8 +162,17 @@ export default function ChatPage() {
     formData.append("message", message || `Analyze this file: ${file.name}`);
 
     const res = await fetch(`/api/proxy/upload`, { method: "POST", body: formData });
-    if (!res.ok) throw new Error(`Upload error: ${res.status}`);
-    return res.json();
+    // Response may be a non-JSON gateway error (e.g. 504 HTML) — parse defensively
+    const raw = await res.text();
+    let parsed: { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string };
+    try {
+      parsed = raw ? JSON.parse(raw) : {};
+    } catch {
+      parsed = { success: false, error: res.status === 504 || res.status === 502
+        ? "The document took too long to analyze. Try a shorter file."
+        : `Upload failed (${res.status}).` };
+    }
+    return parsed;
   }, []);
 
   // ── Voice recording handler ──────────────────────────────────
@@ -245,13 +254,14 @@ export default function ChatPage() {
         data = await sendMessage(text);
       }
 
+      const d = data as { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string };
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.success ? data.response : (data.error || "Request failed"),
-        agentType: data.agentType || "general",
+        content: d.success ? (d.reply || d.response || "No response") : (d.error || "Request failed"),
+        agentType: d.agent || d.agentType || "general",
         timestamp: new Date(),
-        error: !data.success,
+        error: !d.success,
       };
       addMessage(assistantMsg);
     } catch (err) {

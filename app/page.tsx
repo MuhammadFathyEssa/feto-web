@@ -157,6 +157,42 @@ export default function ChatPage() {
     } catch { /* localStorage unavailable */ }
   }, []);
 
+  // Persist conversations across navigation — load once on mount
+  const loadedRef = useRef(false);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("feto:conversations");
+      const savedActive = localStorage.getItem("feto:activeId");
+      if (raw) {
+        const parsed = JSON.parse(raw) as Conversation[];
+        if (Array.isArray(parsed) && parsed.length) {
+          const revived = parsed.map((c) => ({
+            ...c,
+            timestamp: new Date(c.timestamp),
+            messages: (c.messages || []).map((m) => ({ ...m, timestamp: new Date(m.timestamp) })),
+          }));
+          setConversations(revived);
+          if (savedActive && revived.some((c) => c.id === savedActive)) setActiveId(savedActive);
+          else setActiveId(revived[0].id);
+        }
+      }
+    } catch { /* corrupt/unavailable — keep default */ }
+    loadedRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Save conversations whenever they change (only after initial load)
+  useEffect(() => {
+    if (!loadedRef.current) return;
+    try { localStorage.setItem("feto:conversations", JSON.stringify(conversations)); } catch { /* ignore */ }
+  }, [conversations]);
+
+  // Save the active conversation id (only after initial load)
+  useEffect(() => {
+    if (!loadedRef.current) return;
+    try { localStorage.setItem("feto:activeId", activeId); } catch { /* ignore */ }
+  }, [activeId]);
+
   // Persist agent choice whenever it changes
   useEffect(() => {
     try { localStorage.setItem("feto:lastAgent", selectedAgent); } catch { /* ignore */ }

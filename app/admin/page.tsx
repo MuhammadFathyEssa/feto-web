@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Shield, Users, Activity, Lock, Plus, Loader2, CheckCircle, X, Trash2, Pencil, KeyRound } from "lucide-react";
 
-interface User { id: string; email: string; name: string; role: string; last_login?: string; created_at?: string; }
+interface User { id: string; email: string; name: string; role: string; last_login?: string; last_active?: string; created_at?: string; }
 
 const roleColors: Record<string, string> = {
   owner: "text-[#d4a843] bg-[#d4a843]/10 border-[#d4a843]/30",
@@ -118,7 +118,7 @@ export default function AdminPage() {
           {[
             { label: "Total Users", value: users.length || "—" },
             { label: "Admins", value: users.filter(u => u.role === "admin" || u.role === "owner").length || "—" },
-            { label: "Active Agents", value: "10" },
+            { label: "Active Now", value: users.filter(u => u.last_active && (Date.now() - new Date(u.last_active).getTime()) < 15 * 60 * 1000).length || "0" },
             { label: "Security Flags", value: "0" },
           ].map(({ label, value }) => (
             <div key={label} className="bg-[#071428] border border-[#0d2144] rounded-xl p-4">
@@ -211,7 +211,14 @@ export default function AdminPage() {
                 <tbody>
                   {users.map((u) => (
                     <tr key={u.id} className="border-b border-[#0d2144]/50 last:border-0 hover:bg-[#0d2144]/30 transition-colors">
-                      <td className="px-5 py-3 text-slate-300 font-medium">{u.name}</td>
+                      <td className="px-5 py-3 text-slate-300 font-medium">
+                        <span className="flex items-center gap-2">
+                          {u.last_active && (Date.now() - new Date(u.last_active).getTime()) < 15 * 60 * 1000 && (
+                            <span className="w-2 h-2 rounded-full bg-green-400" title="نشط الآن" />
+                          )}
+                          {u.name}
+                        </span>
+                      </td>
                       <td className="px-5 py-3 text-slate-400 text-xs font-mono">{u.email}</td>
                       <td className="px-5 py-3">
                         {editingId === u.id ? (

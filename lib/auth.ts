@@ -103,7 +103,7 @@ export async function getUserById(id: string) {
 
 export async function getAllUsers() {
   const res = await supabaseQuery(
-    `feto_users?select=id,email,name,role,created_at,last_login&order=created_at.desc`,
+    `feto_users?select=id,email,name,role,created_at,last_login,last_active&order=created_at.desc`,
     { method: "GET" }
   );
   if (!res.ok) return [];
@@ -174,6 +174,16 @@ export async function deleteUser(userId: string): Promise<boolean> {
     headers: { Prefer: "return=minimal" },
   });
   return res.ok;
+}
+
+// Record user activity timestamp (for admin "active users" view).
+// Best-effort: silently no-ops if the column is absent.
+export async function touchLastActive(userId: string): Promise<void> {
+  await supabaseQuery(`feto_users?id=eq.${encodeURIComponent(userId)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ last_active: new Date().toISOString() }),
+  }).catch(() => {});
 }
 
 export { COOKIE_NAME };

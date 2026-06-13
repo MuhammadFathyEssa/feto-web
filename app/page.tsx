@@ -7,7 +7,7 @@ import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
   Shield, ChevronDown, Bot, User, AlertCircle, Loader2,
   Menu, X, LogOut, Users, Zap, Paperclip, Mic, MicOff,
-  FileText, Image, StopCircle
+  FileText, Image, StopCircle, Download
 } from "lucide-react";
 import Link from "next/link";
 
@@ -79,6 +79,12 @@ function MessageBubble({ message }: { message: Message }) {
           )}
           {message.content}
         </div>
+        {message.downloadUrl && !isUser && (
+          <a href={message.downloadUrl} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-[#d4a843]/15 border border-[#d4a843]/40 text-[#d4a843] hover:bg-[#d4a843]/25 transition-colors">
+            <Download size={14} /> تحميل تقرير الترتيب (PDF)
+          </a>
+        )}
         {message.agentType && !isUser && <AgentBadge agentType={message.agentType} />}
         <span className="text-xs text-slate-600">
           {(message.timestamp instanceof Date ? message.timestamp : new Date(message.timestamp)).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
@@ -162,17 +168,14 @@ export default function ChatPage() {
     formData.append("message", message || `Analyze this file: ${file.name}`);
 
     const res = await fetch(`/api/proxy/upload`, { method: "POST", body: formData });
-    // Response may be a non-JSON gateway error (e.g. 504 HTML) — parse defensively
     const raw = await res.text();
-    let parsed: { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string };
     try {
-      parsed = raw ? JSON.parse(raw) : {};
+      return raw ? JSON.parse(raw) : {};
     } catch {
-      parsed = { success: false, error: res.status === 504 || res.status === 502
-        ? "The document took too long to analyze. Try a shorter file."
+      return { success: false, error: res.status === 504 || res.status === 502
+        ? "الملف أخد وقت طويل في التحليل. جرّب ملف أصغر."
         : `Upload failed (${res.status}).` };
     }
-    return parsed;
   }, []);
 
   // ── Voice recording handler ──────────────────────────────────
@@ -254,7 +257,7 @@ export default function ChatPage() {
         data = await sendMessage(text);
       }
 
-      const d = data as { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string };
+      const d = data as { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string; downloadUrl?: string };
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
@@ -262,6 +265,7 @@ export default function ChatPage() {
         agentType: d.agent || d.agentType || "general",
         timestamp: new Date(),
         error: !d.success,
+        downloadUrl: d.downloadUrl,
       };
       addMessage(assistantMsg);
     } catch (err) {

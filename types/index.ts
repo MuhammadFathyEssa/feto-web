@@ -5,6 +5,7 @@ export interface Message {
   agentType?: string;
   timestamp: Date;
   error?: boolean;
+  downloadUrl?: string;
 }
 
 export interface Conversation {

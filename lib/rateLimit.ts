@@ -41,6 +41,33 @@ export function checkRateLimit(
   return { ok: true, retryAfterSec: 0 };
 }
 
+// Check the limit WITHOUT consuming an attempt (read-only).
+export function peekRateLimit(
+  key: string,
+  max = MAX_HITS,
+  windowMs = WINDOW_MS
+): { ok: boolean; retryAfterSec: number } {
+  const now = Date.now();
+  sweep(now);
+  const b = buckets.get(key);
+  if (!b) return { ok: true, retryAfterSec: 0 };
+  const hits = b.hits.filter((t) => now - t < windowMs);
+  if (hits.length >= max) {
+    const retryAfterSec = Math.ceil((windowMs - (now - hits[0])) / 1000);
+    return { ok: false, retryAfterSec };
+  }
+  return { ok: true, retryAfterSec: 0 };
+}
+
+// Record a single failed attempt (consume one slot).
+export function recordFailedAttempt(key: string, max = MAX_HITS, windowMs = WINDOW_MS): void {
+  const now = Date.now();
+  const b = buckets.get(key) || { hits: [] };
+  b.hits = b.hits.filter((t) => now - t < windowMs);
+  b.hits.push(now);
+  buckets.set(key, b);
+}
+
 export function resetRateLimit(key: string) {
   buckets.delete(key);
 }

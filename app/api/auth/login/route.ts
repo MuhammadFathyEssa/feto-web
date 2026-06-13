@@ -1,18 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getUserByEmail, signToken, updateLastLogin, COOKIE_NAME } from "@/lib/auth";
-import { checkRateLimit, resetRateLimit } from "@/lib/rateLimit";
+import { peekRateLimit, recordFailedAttempt, resetRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
-  // Rate limit by client IP — 5 attempts / 15 min
+  // Identify client IP for rate-limit bookkeeping
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
     req.headers.get("x-real-ip") ||
     "unknown";
-  const rl = checkRateLimit(`login:${ip}`);
+  const key = `login:${ip}`;
+
+  // Check WITHOUT consuming an attempt — we only penalize failed logins below.
+  // 10 attempts / 10 minutes: enough for fat-finger retries, still blocks brute force.
+  const rl = peekRateLimit(key, 10, 10 * 60 * 1000);
   if (!rl.ok) {
     return NextResponse.json(
-      { success: false, error: "Too many attempts. Try again later." },
+      { success: false, error: `Too many attempts. Try again in ${Math.ceil(rl.retryAfterSec / 60)} min.` },
       { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } }
     );
   }
@@ -27,11 +31,13 @@ export async function POST(req: NextRequest) {
     const user = await getUserByEmail(email.toLowerCase().trim());
 
     if (!user) {
+      recordFailedAttempt(key, 10, 10 * 60 * 1000);
       return NextResponse.json({ success: false, error: "Invalid email or password" }, { status: 401 });
     }
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
+      recordFailedAttempt(key, 10, 10 * 60 * 1000);
       return NextResponse.json({ success: false, error: "Invalid email or password" }, { status: 401 });
     }
 
@@ -44,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     const token = await signToken(sessionUser);
     await updateLastLogin(user.id);
-    resetRateLimit(`login:${ip}`);
+    resetRateLimit(key); // clear on success
 
     const res = NextResponse.json({ success: true, user: sessionUser });
     res.cookies.set(COOKIE_NAME, token, {

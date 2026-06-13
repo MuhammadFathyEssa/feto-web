@@ -101,7 +101,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#040d1a] text-slate-200">
       <header className="border-b border-[#0d2144] bg-[#071428] px-6 py-4 flex items-center gap-4">
         <Link href="/" className="text-slate-400 hover:text-slate-200 transition-colors">
-          <ArrowLeft size={18} />
+          <ArrowLeft size={18} aria-label="رجوع" />
         </Link>
         <div className="flex items-center gap-2">
           <Shield size={18} className="text-[#d4a843]" />
@@ -148,7 +148,7 @@ export default function AdminPage() {
             <div className="border-b border-[#0d2144] bg-[#0d2144]/40 px-5 py-4">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-sm font-medium text-slate-300">Create New User</h4>
-                <button onClick={() => setShowCreate(false)} className="text-slate-500 hover:text-slate-300">
+                <button aria-label="إغلاق" onClick={() => setShowCreate(false)} className="text-slate-500 hover:text-slate-300">
                   <X size={14} />
                 </button>
               </div>
@@ -242,11 +242,11 @@ export default function AdminPage() {
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => setEditingId(editingId === u.id ? null : u.id)} title="تغيير الدور"
+                          <button onClick={() => setEditingId(editingId === u.id ? null : u.id)} aria-label="تغيير الدور" title="تغيير الدور"
                             className="text-slate-500 hover:text-[#d4a843] transition-colors"><Pencil size={14} /></button>
-                          <button onClick={() => resetPassword(u.id, u.email)} title="تغيير كلمة السر"
+                          <button onClick={() => resetPassword(u.id, u.email)} aria-label="تغيير كلمة السر" title="تغيير كلمة السر"
                             className="text-slate-500 hover:text-blue-400 transition-colors"><KeyRound size={14} /></button>
-                          <button onClick={() => removeUser(u.id, u.email)} title="حذف"
+                          <button onClick={() => removeUser(u.id, u.email)} aria-label="حذف المستخدم" title="حذف"
                             className="text-slate-500 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
                         </div>
                       </td>

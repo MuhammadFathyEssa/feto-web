@@ -380,7 +380,7 @@ export default function RecruiterPage() {
     <div className="min-h-screen bg-[#040d1a] text-slate-200">
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="flex items-center gap-3 mb-6">
-          <Link href="/" className="text-slate-500 hover:text-slate-300"><ArrowLeft size={18} /></Link>
+          <Link href="/" aria-label="رجوع للرئيسية" className="text-slate-500 hover:text-slate-300"><ArrowLeft size={18} /></Link>
           <div>
             <h1 className="text-xl font-bold text-slate-100">Recruiter</h1>
             <p className="text-xs text-slate-500">مساعد التوظيف الذكي — تقييم، أوصاف وظيفية، إنترفيو، ومقارنة</p>

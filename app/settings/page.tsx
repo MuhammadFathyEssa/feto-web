@@ -57,7 +57,7 @@ export default function SettingsPage() {
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    router.push("/");
   };
 
   return (
@@ -67,8 +67,8 @@ export default function SettingsPage() {
           <ArrowLeft size={18} />
         </Link>
         <div className="flex items-center gap-2">
-          <Shield size={18} className="text-[#d4a843]" />
-          <span className="font-semibold text-sm">Settings</span>
+          <span style={{width:22,height:22,borderRadius:"50%",border:"1px solid rgba(224,169,85,.45)",display:"inline-flex",alignItems:"center",justifyContent:"center",flex:"0 0 auto"}}><span style={{width:5,height:5,borderRadius:"50%",background:"#e0a955",boxShadow:"0 0 8px 2px rgba(224,169,85,.55)"}} /></span>
+          <span className="font-semibold text-sm" style={{fontFamily:"'Playfair Display',Georgia,serif"}}>Settings</span>
         </div>
         <button onClick={handleLogout} className="ml-auto flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors">
           <LogOut size={13} /> Sign out
@@ -93,7 +93,7 @@ export default function SettingsPage() {
         {/* Change Password */}
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
-            <KeyRound size={14} className="text-[#d4a843]" /> Change Password
+            <KeyRound size={14} className="text-[#e0a955]" /> Change Password
           </h3>
           <form onSubmit={handleChangePassword} className="space-y-4">
             {[
@@ -109,7 +109,7 @@ export default function SettingsPage() {
                   onChange={(e) => set(e.target.value)}
                   autoComplete={auto}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 outline-none transition-colors"
+                  className="w-full px-3 py-2.5 rounded-lg bg-[#0d2144] border border-[#1a2235] focus:border-[#e0a955]/50 text-sm text-slate-200 placeholder-slate-600 outline-none transition-colors"
                 />
               </div>
             ))}
@@ -118,7 +118,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={pwLoading}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-50 text-[#040d1a] text-sm font-semibold transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#e0a955] hover:bg-[#eab667] disabled:opacity-50 text-[#040d1a] text-sm font-semibold transition-colors"
             >
               {pwLoading ? <Loader2 size={14} className="animate-spin" /> : <KeyRound size={14} />}
               {pwLoading ? "Updating..." : "Update Password"}
@@ -147,7 +147,7 @@ export default function SettingsPage() {
 
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/30 text-slate-300 text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d2144] border border-[#1a2235] hover:border-[#e0a955]/30 text-slate-300 text-sm font-medium transition-colors"
         >
           {saved ? <CheckCircle size={14} className="text-emerald-400" /> : <Save size={14} />}
           {saved ? "Saved" : "Save Settings"}
@@ -155,7 +155,7 @@ export default function SettingsPage() {
 
         <div className="mt-8 pt-6 border-t border-[#0d2144]">
           <div className="flex items-start gap-3 text-xs text-slate-500 leading-relaxed">
-            <Shield size={14} className="text-[#d4a843] mt-0.5 flex-shrink-0" />
+            <Shield size={14} className="text-[#e0a955] mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-slate-400 font-medium mb-1">الأمان والخصوصية</p>
               <p>اتصالك مع فيتو مُشفّر بالكامل. الوصول مُتحكَّم فيه بالأدوار (RBAC)، وكل بياناتك معزولة عن باقي المستخدمين. الإجراءات الإدارية مُسجّلة للمساءلة.</p>

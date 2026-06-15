@@ -3,7 +3,7 @@ import { verifyToken, refreshActivity, COOKIE_NAME } from "@/lib/auth";
 
 // Public marketing routes — reachable without authentication
 const PUBLIC_EXACT = ["/"];
-const PUBLIC_PATHS = ["/login", "/api/auth/login"];
+const PUBLIC_PATHS = ["/login", "/forgot-password", "/reset-password", "/request-access", "/api/access-request", "/api/auth/login", "/api/auth/forgot-password", "/api/auth/reset-password"];
 // Pages + APIs only owner/admin may reach
 const ADMIN_PATHS = ["/admin", "/dashboard", "/api/users"];
 

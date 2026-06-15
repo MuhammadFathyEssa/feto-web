@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
-  Shield, ArrowLeft, RefreshCw, CalendarDays, Mail, ListChecks,
+  ArrowLeft, RefreshCw, CalendarDays, Mail, ListChecks,
   Landmark, AlertTriangle, MessageSquare, Clock,
 } from "lucide-react";
 
@@ -53,8 +53,8 @@ export default function DashboardPage() {
           <ArrowLeft size={18} />
         </Link>
         <div className="flex items-center gap-2">
-          <Shield size={18} className="text-[#d4a843]" />
-          <span className="font-semibold text-sm">FeTo — Command Center</span>
+          <span style={{width:22,height:22,borderRadius:"50%",border:"1px solid rgba(224,169,85,.45)",display:"inline-flex",alignItems:"center",justifyContent:"center",flex:"0 0 auto"}}><span style={{width:5,height:5,borderRadius:"50%",background:"#e0a955",boxShadow:"0 0 8px 2px rgba(224,169,85,.55)"}} /></span>
+          <span className="font-semibold text-sm" style={{fontFamily:"'Playfair Display',Georgia,serif"}}>Command Center</span>
         </div>
         <div className="ml-auto flex items-center gap-3 text-xs">
           {data && (
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
-              label: "Open Commitments", icon: ListChecks, color: "text-[#d4a843]",
+              label: "Open Commitments", icon: ListChecks, color: "text-[#e0a955]",
               value: c ? String(c.open) : "—",
               sub: c && c.overdue > 0 ? `${c.overdue} overdue` : c ? "on track" : "",
               alert: Boolean(c && c.overdue > 0),
@@ -117,7 +117,7 @@ export default function DashboardPage() {
           {/* Commitments */}
           <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
             <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
-              <ListChecks size={15} className="text-[#d4a843]" /> Commitments
+              <ListChecks size={15} className="text-[#e0a955]" /> Commitments
             </h3>
             {!c || c.items.length === 0 ? (
               <p className="text-xs text-slate-600">No open commitments. Use /commit in Telegram to track one.</p>
@@ -182,7 +182,7 @@ export default function DashboardPage() {
           {/* Decisions */}
           <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-5">
             <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
-              <Landmark size={15} className="text-[#d4a843]" /> Recent Decisions
+              <Landmark size={15} className="text-[#e0a955]" /> Recent Decisions
             </h3>
             {!data || data.decisions.length === 0 ? (
               <p className="text-xs text-slate-600">No decisions recorded yet. Use /decide or /council.</p>
@@ -203,7 +203,7 @@ export default function DashboardPage() {
         <div className="flex flex-wrap gap-3">
           <Link
             href="/app"
-            className="flex items-center gap-2 bg-[#d4a843] text-[#040d1a] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#e0b855] transition-colors"
+            className="flex items-center gap-2 bg-[#e0a955] text-[#040d1a] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#e0b855] transition-colors"
           >
             <MessageSquare size={15} /> Open Chat
           </Link>

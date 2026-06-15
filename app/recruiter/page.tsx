@@ -9,13 +9,13 @@ import {
 
 type Tab = "evaluate" | "jd" | "interview" | "compare";
 
-const GOLD = "#d4a843";
+const GOLD = "#e0a955";
 
 // ── shared bits ──────────────────────────────────────────────────
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-5">
-      <h3 className="text-[#d4a843] font-semibold text-sm mb-2 uppercase tracking-wide">{title}</h3>
+      <h3 className="text-[#e0a955] font-semibold text-sm mb-2 uppercase tracking-wide">{title}</h3>
       <div className="text-slate-200 text-sm leading-relaxed">{children}</div>
     </div>
   );
@@ -33,13 +33,13 @@ function Bullets({ items, color = "text-slate-200" }: { items: string[]; color?:
   return (
     <ul className="space-y-1.5">
       {items.map((s, i) => (
-        <li key={i} className={`flex gap-2 ${color}`}><span className="text-[#d4a843] mt-0.5">•</span><span>{s}</span></li>
+        <li key={i} className={`flex gap-2 ${color}`}><span className="text-[#e0a955] mt-0.5">•</span><span>{s}</span></li>
       ))}
     </ul>
   );
 }
 function ScoreRing({ score, label }: { score: number; label: string }) {
-  const color = score >= 80 ? "#2E9E5B" : score >= 60 ? "#d4a843" : "#c0532e";
+  const color = score >= 80 ? "#2E9E5B" : score >= 60 ? "#e0a955" : "#c0532e";
   return (
     <div className="flex flex-col items-center gap-1">
       <div className="relative w-20 h-20">
@@ -95,8 +95,8 @@ function EvaluateCV() {
         onChange={(ev) => { const f = ev.target.files?.[0]; if (f) run(f); if (fileRef.current) fileRef.current.value = ""; }} />
       {!e && !loading && (
         <button onClick={() => fileRef.current?.click()}
-          className="w-full border-2 border-dashed border-[#1a3f7c] rounded-xl py-12 flex flex-col items-center gap-3 text-slate-400 hover:border-[#d4a843]/50 hover:text-slate-300 transition-colors">
-          <Upload size={28} className="text-[#d4a843]" />
+          className="w-full border-2 border-dashed border-[#1a3f7c] rounded-xl py-12 flex flex-col items-center gap-3 text-slate-400 hover:border-[#e0a955]/50 hover:text-slate-300 transition-colors">
+          <Upload size={28} className="text-[#e0a955]" />
           <span className="text-sm">ارفع السيرة الذاتية (PDF / Word / TXT)</span>
           <span className="text-xs text-slate-600">سيتم تحليلها وإنشاء تقرير تقييم شامل</span>
         </button>
@@ -104,7 +104,7 @@ function EvaluateCV() {
       {loading && (
         <div className="py-6">
           <div className="flex items-center gap-2 text-slate-400 mb-5">
-            <Loader2 className="animate-spin text-[#d4a843]" size={18} />
+            <Loader2 className="animate-spin text-[#e0a955]" size={18} />
             <span className="text-sm">بحلّل السيرة الذاتية...</span>
           </div>
           <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-6 animate-pulse">
@@ -142,7 +142,7 @@ function EvaluateCV() {
           <Section title="Missing Skills"><Pills items={e.missingSkills} /></Section>
           <Section title="Improvement Suggestions"><Bullets items={e.improvements} /></Section>
           <div className="mt-4 bg-[#0d2144]/50 border border-[#1a3f7c]/40 rounded-lg p-4">
-            <span className="text-[#d4a843] text-xs font-semibold uppercase">Recommendation</span>
+            <span className="text-[#e0a955] text-xs font-semibold uppercase">Recommendation</span>
             <p className="text-slate-200 text-sm mt-1">{e.recommendation}</p>
           </div>
         </div>
@@ -183,11 +183,11 @@ function GenerateJD() {
     <div>
       <div className="space-y-3 mb-5">
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="المسمى الوظيفي (e.g. Senior Core Banking Engineer)"
-          className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#d4a843]/50 outline-none" />
+          className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#e0a955]/50 outline-none" />
         <textarea value={req} onChange={(e) => setReq(e.target.value)} placeholder="متطلبات إضافية (اختياري) — seniority, tech stack, domain..."
-          rows={3} className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#d4a843]/50 outline-none resize-none" />
+          rows={3} className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#e0a955]/50 outline-none resize-none" />
         <button onClick={run} disabled={loading || !title.trim()}
-          className="w-full bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-40 text-[#040d1a] font-semibold rounded-lg py-3 text-sm flex items-center justify-center gap-2 transition-colors">
+          className="w-full bg-[#e0a955] hover:bg-[#eab667] disabled:opacity-40 text-[#040d1a] font-semibold rounded-lg py-3 text-sm flex items-center justify-center gap-2 transition-colors">
           {loading ? <><Loader2 className="animate-spin" size={16} /> بنشئ الوصف...</> : <><FileText size={16} /> Generate JD</>}
         </button>
       </div>
@@ -196,7 +196,7 @@ function GenerateJD() {
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-6">
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#0d2144]">
             <h2 className="text-lg font-bold text-slate-100">{j.title}</h2>
-            <button onClick={copyAll} className="text-[#d4a843] text-xs flex items-center gap-1 hover:text-[#c49a2a]"><Download size={13} /> Copy</button>
+            <button onClick={copyAll} className="text-[#e0a955] text-xs flex items-center gap-1 hover:text-[#eab667]"><Download size={13} /> Copy</button>
           </div>
           <Section title="Overview">{j.overview}</Section>
           <Section title="Key Responsibilities"><Bullets items={j.responsibilities} /></Section>
@@ -239,10 +239,10 @@ function InterviewPrep() {
       <div className="space-y-3">
         {qs.map((q, i) => (
           <details key={i} className="bg-[#0d2144]/40 border border-[#1a2235] rounded-lg p-3 group">
-            <summary className="cursor-pointer text-slate-200 text-sm font-medium list-none flex gap-2"><span className="text-[#d4a843]">{i + 1}.</span>{q.question}</summary>
+            <summary className="cursor-pointer text-slate-200 text-sm font-medium list-none flex gap-2"><span className="text-[#e0a955]">{i + 1}.</span>{q.question}</summary>
             <div className="mt-2 pt-2 border-t border-[#1a2235] space-y-1.5 text-xs">
               <p className="text-slate-400"><span className="text-green-400">نموذج الإجابة: </span>{q.modelAnswer}</p>
-              <p className="text-slate-400"><span className="text-[#d4a843]">معايير التقييم: </span>{q.evaluationCriteria}</p>
+              <p className="text-slate-400"><span className="text-[#e0a955]">معايير التقييم: </span>{q.evaluationCriteria}</p>
             </div>
           </details>
         ))}
@@ -254,11 +254,11 @@ function InterviewPrep() {
     <div>
       <div className="space-y-3 mb-5">
         <input value={role} onChange={(e) => setRole(e.target.value)} placeholder="المنصب (e.g. CISO, T24 Consultant, Data Engineer)"
-          className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#d4a843]/50 outline-none" />
+          className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#e0a955]/50 outline-none" />
         <textarea value={ctx} onChange={(e) => setCtx(e.target.value)} placeholder="سياق إضافي (اختياري) — seniority level, focus areas..."
-          rows={2} className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#d4a843]/50 outline-none resize-none" />
+          rows={2} className="w-full bg-[#071428] border border-[#1a2235] rounded-lg px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:border-[#e0a955]/50 outline-none resize-none" />
         <button onClick={run} disabled={loading || !role.trim()}
-          className="w-full bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-40 text-[#040d1a] font-semibold rounded-lg py-3 text-sm flex items-center justify-center gap-2 transition-colors">
+          className="w-full bg-[#e0a955] hover:bg-[#eab667] disabled:opacity-40 text-[#040d1a] font-semibold rounded-lg py-3 text-sm flex items-center justify-center gap-2 transition-colors">
           {loading ? <><Loader2 className="animate-spin" size={16} /> بجهّز الأسئلة...</> : <><MessagesSquare size={16} /> Generate Interview Package</>}
         </button>
       </div>
@@ -271,7 +271,7 @@ function InterviewPrep() {
           <QBlock title="Situational Questions" qs={p.situational} />
           <Section title="Scoring Framework"><Bullets items={p.scoringFramework} /></Section>
           <div className="mt-4 bg-[#0d2144]/50 border border-[#1a3f7c]/40 rounded-lg p-4">
-            <span className="text-[#d4a843] text-xs font-semibold uppercase">How to Run It</span>
+            <span className="text-[#e0a955] text-xs font-semibold uppercase">How to Run It</span>
             <p className="text-slate-200 text-sm mt-1">{p.summary}</p>
           </div>
         </div>
@@ -321,8 +321,8 @@ function CompareCandidates() {
       {!r && (
         <div className="mb-5">
           <button onClick={() => fileRef.current?.click()} disabled={loading}
-            className="w-full border-2 border-dashed border-[#1a3f7c] rounded-xl py-8 flex flex-col items-center gap-2 text-slate-400 hover:border-[#d4a843]/50 transition-colors disabled:opacity-50">
-            {loading ? <Loader2 className="animate-spin text-[#d4a843]" size={24} /> : <Upload size={24} className="text-[#d4a843]" />}
+            className="w-full border-2 border-dashed border-[#1a3f7c] rounded-xl py-8 flex flex-col items-center gap-2 text-slate-400 hover:border-[#e0a955]/50 transition-colors disabled:opacity-50">
+            {loading ? <Loader2 className="animate-spin text-[#e0a955]" size={24} /> : <Upload size={24} className="text-[#e0a955]" />}
             <span className="text-sm">{loading ? "بحمّل..." : "ارفع سيرة ذاتية (واحدة في كل مرة)"}</span>
           </button>
           {cvs.length > 0 && (
@@ -334,7 +334,7 @@ function CompareCandidates() {
                 </div>
               ))}
               <button onClick={runRank} disabled={cvs.length < 2 || ranking}
-                className="w-full bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-40 text-[#040d1a] font-semibold rounded-lg py-3 text-sm flex items-center justify-center gap-2 transition-colors">
+                className="w-full bg-[#e0a955] hover:bg-[#eab667] disabled:opacity-40 text-[#040d1a] font-semibold rounded-lg py-3 text-sm flex items-center justify-center gap-2 transition-colors">
                 {ranking ? <><Loader2 className="animate-spin" size={16} /> بقارن وأرتّب...</> : <><GitCompare size={16} /> قارن ({cvs.length}) مرشحين</>}
               </button>
               {cvs.length < 2 && <p className="text-xs text-slate-600 text-center">محتاج سيرتين على الأقل</p>}
@@ -346,7 +346,7 @@ function CompareCandidates() {
       {r && (
         <div className="bg-[#071428] border border-[#0d2144] rounded-xl p-6">
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#0d2144]">
-            <div className="flex items-center gap-2"><Trophy size={18} className="text-[#d4a843]" /><h2 className="text-lg font-bold text-slate-100">ترتيب المرشحين</h2></div>
+            <div className="flex items-center gap-2"><Trophy size={18} className="text-[#e0a955]" /><h2 className="text-lg font-bold text-slate-100">ترتيب المرشحين</h2></div>
             <button onClick={() => { setResult(null); setCvs([]); }} className="text-slate-500 hover:text-slate-300 text-sm flex items-center gap-1"><X size={14} /> مقارنة جديدة</button>
           </div>
           <p className="text-slate-300 text-sm mb-4 bg-[#0d2144]/50 rounded-lg p-3">{r.summary}</p>
@@ -373,7 +373,7 @@ function CompareCandidates() {
             <div className="space-y-3">
               {r.candidates.map((c) => (
                 <div key={c.rank} className="bg-[#0d2144]/40 border border-[#1a2235] rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1"><span className="text-[#d4a843] font-semibold">{c.rank}. {c.name}</span><span className="text-slate-500 text-xs">— {c.score}/100</span></div>
+                  <div className="flex items-center gap-2 mb-1"><span className="text-[#e0a955] font-semibold">{c.rank}. {c.name}</span><span className="text-slate-500 text-xs">— {c.score}/100</span></div>
                   <p className="text-xs text-green-300">قوة: {c.topStrength}</p>
                   <p className="text-xs text-amber-300">فجوة: {c.mainGap}</p>
                 </div>
@@ -403,7 +403,7 @@ export default function RecruiterPage() {
         <div className="flex items-center gap-3 mb-6">
           <Link href="/app" aria-label="رجوع للرئيسية" className="text-slate-500 hover:text-slate-300"><ArrowLeft size={18} /></Link>
           <div>
-            <h1 className="text-xl font-bold text-slate-100">Recruiter</h1>
+            <h1 className="text-xl font-bold text-slate-100" style={{fontFamily:"'Playfair Display',Georgia,serif"}}>Recruiter</h1>
             <p className="text-xs text-slate-500">مساعد التوظيف الذكي — تقييم، أوصاف وظيفية، إنترفيو، ومقارنة</p>
           </div>
         </div>
@@ -412,7 +412,7 @@ export default function RecruiterPage() {
           {TABS.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setTab(id)}
               className={`flex flex-col items-center gap-2 py-4 rounded-xl border text-xs font-medium transition-colors ${
-                tab === id ? "bg-[#d4a843]/15 border-[#d4a843]/50 text-[#d4a843]" : "bg-[#071428] border-[#0d2144] text-slate-400 hover:border-[#1a3f7c]"
+                tab === id ? "bg-[#e0a955]/15 border-[#e0a955]/50 text-[#e0a955]" : "bg-[#071428] border-[#0d2144] text-slate-400 hover:border-[#1a3f7c]"
               }`}>
               <Icon size={20} /> {label}
             </button>

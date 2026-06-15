@@ -137,7 +137,7 @@ export default function LandingPage() {
                 <h1>The executive mind,<br /><em>multiplied.</em></h1>
                 <p className="hero-lede">FeTo is an intelligence platform where thirteen specialized AI agents reason together — in Arabic and English — for the institutions that run the region.</p>
                 <div className="hero-actions">
-                  <Link href="/login" className="btn-primary">Request access</Link>
+                  <Link href="/request-access" className="btn-primary">Request access</Link>
                   <a href="#platform" className="btn-ghost">See the platform</a>
                 </div>
                 <div className="hero-meta">
@@ -288,7 +288,7 @@ export default function LandingPage() {
             <h2>Intelligence worthy of<br />the <em>decisions you make.</em></h2>
             <p>FeTo is currently available to a select group of institutions and leaders. Request access and see what an executive council of AI agents can do.</p>
             <div className="cta-actions">
-              <Link href="/login" className="btn-primary">Request access</Link>
+              <Link href="/request-access" className="btn-primary">Request access</Link>
               <a href="#platform" className="btn-ghost">Explore the platform</a>
             </div>
           </div>
@@ -321,7 +321,7 @@ export default function LandingPage() {
             <div className="foot-col">
               <h4>Access</h4>
               <Link href="/login">Sign in</Link>
-              <Link href="/login">Request access</Link>
+              <Link href="/request-access">Request access</Link>
             </div>
           </div>
           <div className="foot-bottom">

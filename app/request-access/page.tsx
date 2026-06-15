@@ -1,0 +1,113 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import Constellation from "@/app/components/Constellation";
+
+export default function RequestAccessPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [org, setOrg] = useState("");
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
+  const [alreadyUser, setAlreadyUser] = useState(false);
+  const [error, setError] = useState("");
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email) { setError("Name and email are required"); return; }
+    setLoading(true); setError("");
+    try {
+      const res = await fetch("/api/access-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, organization: org, reason }),
+      });
+      const data = await res.json();
+      if (!data.success) { setError(data.error || "Request failed"); setLoading(false); return; }
+      if (data.alreadyUser) setAlreadyUser(true);
+      setDone(true);
+    } catch {
+      setError("Connection error. Try again."); setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#040d1a]">
+      <div className="relative lg:w-1/2 h-56 lg:h-auto overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "radial-gradient(120% 120% at 0% 0%, #1b2552 0%, #0c1430 40%, #040d1a 70%), radial-gradient(120% 120% at 100% 0%, #3a2917 0%, rgba(58,41,23,0) 45%)" }} />
+        <Constellation className="absolute inset-0" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-[#040d1a] lg:hidden" />
+        <div className="relative z-10 h-full flex flex-col justify-center px-8 lg:px-16">
+          <div className="w-11 h-11 rounded-full border border-[#e0a955]/40 flex items-center justify-center mb-5">
+            <span className="block w-2 h-2 rounded-full bg-[#e0a955] shadow-[0_0_12px_3px_rgba(224,169,85,0.6)]" />
+          </div>
+          <h1 className="text-5xl lg:text-6xl italic text-[#f0ebe0] leading-none" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>FeTo</h1>
+          <p className="mt-3 text-sm tracking-[0.2em] uppercase text-slate-400">Executive Intelligence</p>
+          <p className="mt-6 text-[15px] text-slate-400 max-w-xs leading-relaxed hidden lg:block">
+            Access is granted to a select group of institutions and leaders. Tell us a little about you and we&rsquo;ll be in touch.
+          </p>
+        </div>
+      </div>
+
+      <div className="lg:w-1/2 flex items-center justify-center px-6 py-10 lg:py-0">
+        <div className="w-full max-w-sm">
+          {done ? (
+            <div>
+              <div className="w-11 h-11 rounded-xl bg-[#e0a955]/10 border border-[#e0a955]/30 flex items-center justify-center mb-6">
+                <CheckCircle size={22} className="text-[#e0a955]" />
+              </div>
+              <h2 className="text-3xl text-[#f0ebe0]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                {alreadyUser ? "You already have access" : "Request received"}
+              </h2>
+              <p className="text-slate-500 mt-3 text-[15px] leading-relaxed">
+                {alreadyUser
+                  ? "An account already exists for this email. Please sign in."
+                  : "Thank you. Our team will review your request and email you the outcome."}
+              </p>
+              <Link href="/login" className="inline-block mt-8 text-sm text-[#e0a955] hover:text-[#f0bd6e]">Go to sign in</Link>
+            </div>
+          ) : (
+            <>
+              <Link href="/" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 mb-8 transition-colors">
+                <ArrowLeft size={15} /> Back to home
+              </Link>
+              <h2 className="text-3xl text-[#f0ebe0]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Request access</h2>
+              <p className="text-slate-500 mt-2 text-[15px]">Tell us about you. We review every request personally.</p>
+              <form onSubmit={submit} className="mt-8 space-y-4">
+                <div>
+                  <label className="block text-[11px] tracking-[0.15em] uppercase text-slate-500 mb-2 font-medium">Full name</label>
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
+                    className="w-full px-4 py-3 rounded-xl bg-[#0c1430]/60 border border-[#1a2550] focus:border-[#e0a955]/60 text-[15px] text-slate-100 placeholder-slate-600 outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-[11px] tracking-[0.15em] uppercase text-slate-500 mb-2 font-medium">Work email</label>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="email"
+                    className="w-full px-4 py-3 rounded-xl bg-[#0c1430]/60 border border-[#1a2550] focus:border-[#e0a955]/60 text-[15px] text-slate-100 placeholder-slate-600 outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-[11px] tracking-[0.15em] uppercase text-slate-500 mb-2 font-medium">Organization</label>
+                  <input type="text" value={org} onChange={(e) => setOrg(e.target.value)} placeholder="Company or institution"
+                    className="w-full px-4 py-3 rounded-xl bg-[#0c1430]/60 border border-[#1a2550] focus:border-[#e0a955]/60 text-[15px] text-slate-100 placeholder-slate-600 outline-none transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-[11px] tracking-[0.15em] uppercase text-slate-500 mb-2 font-medium">What do you need FeTo for?</label>
+                  <textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="A sentence or two about your use case" rows={3}
+                    className="w-full px-4 py-3 rounded-xl bg-[#0c1430]/60 border border-[#1a2550] focus:border-[#e0a955]/60 text-[15px] text-slate-100 placeholder-slate-600 outline-none transition-colors resize-none" />
+                </div>
+                {error && <p className="text-xs text-red-400 bg-red-900/20 border border-red-800/30 rounded-lg px-3 py-2">{error}</p>}
+                <button type="submit" disabled={loading}
+                  className="w-full py-3.5 rounded-xl bg-[#e0a955] hover:bg-[#eab667] disabled:opacity-50 text-[#040d1a] text-[15px] font-semibold transition-colors flex items-center justify-center gap-2 shadow-[0_8px_24px_-8px_rgba(224,169,85,0.5)]">
+                  {loading && <Loader2 size={16} className="animate-spin" />}
+                  {loading ? "Submitting..." : "Submit request"}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

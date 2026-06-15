@@ -186,4 +186,84 @@ export async function touchLastActive(userId: string): Promise<void> {
   }).catch(() => {});
 }
 
+
+// ── Password resets ───────────────────────────────────────────
+// Table: feto_password_resets (token text pk, user_id uuid, email text, expires_at timestamptz, used bool default false, created_at timestamptz default now())
+
+export async function createPasswordReset(userId: string, email: string, token: string, expiresAt: string): Promise<boolean> {
+  const res = await supabaseQuery("feto_password_resets", {
+    method: "POST",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ token, user_id: userId, email, expires_at: expiresAt, used: false }),
+  });
+  return res.ok;
+}
+
+export async function getPasswordReset(token: string) {
+  const res = await supabaseQuery(
+    `feto_password_resets?token=eq.${encodeURIComponent(token)}&select=*&limit=1`,
+    { method: "GET" }
+  );
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+export async function markPasswordResetUsed(token: string): Promise<boolean> {
+  const res = await supabaseQuery(`feto_password_resets?token=eq.${encodeURIComponent(token)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ used: true }),
+  });
+  return res.ok;
+}
+
+// ── Access requests ───────────────────────────────────────────
+// Table: feto_access_requests (id uuid pk default gen_random_uuid(), name text, email text, organization text, reason text, status text default 'pending', created_at timestamptz default now())
+
+export async function createAccessRequest(name: string, email: string, organization: string, reason: string): Promise<boolean> {
+  const res = await supabaseQuery("feto_access_requests", {
+    method: "POST",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ name, email, organization, reason, status: "pending" }),
+  });
+  return res.ok;
+}
+
+export async function getAccessRequests(status = "pending") {
+  const res = await supabaseQuery(
+    `feto_access_requests?status=eq.${encodeURIComponent(status)}&select=*&order=created_at.desc`,
+    { method: "GET" }
+  );
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function getAccessRequestById(id: string) {
+  const res = await supabaseQuery(
+    `feto_access_requests?id=eq.${encodeURIComponent(id)}&select=*&limit=1`,
+    { method: "GET" }
+  );
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows[0] || null;
+}
+
+export async function updateAccessRequestStatus(id: string, status: string): Promise<boolean> {
+  const res = await supabaseQuery(`feto_access_requests?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ status }),
+  });
+  return res.ok;
+}
+
+export async function deleteAccessRequest(id: string): Promise<boolean> {
+  const res = await supabaseQuery(`feto_access_requests?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { Prefer: "return=minimal" },
+  });
+  return res.ok;
+}
+
 export { COOKIE_NAME };

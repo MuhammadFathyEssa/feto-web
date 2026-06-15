@@ -10,7 +10,9 @@ export type AdminAction =
   | "user.role_change"
   | "user.password_reset"
   | "admin.login"
-  | "admin.logout";
+  | "admin.logout"
+  | "access_request.accept"
+  | "access_request.reject";
 
 export interface AuditEntry {
   action: AdminAction;

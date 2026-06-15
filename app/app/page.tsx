@@ -45,13 +45,13 @@ function AgentBadge({ agentType }: { agentType: string }) {
 function TypingIndicator() {
   return (
     <div className="flex gap-3 px-4 py-3">
-      <div className="w-7 h-7 rounded-full bg-[#d4a843]/20 border border-[#d4a843]/40 flex items-center justify-center flex-shrink-0">
-        <Bot size={14} className="text-[#d4a843]" />
+      <div className="w-7 h-7 rounded-full bg-[#e0a955]/20 border border-[#e0a955]/40 flex items-center justify-center flex-shrink-0">
+        <Bot size={14} className="text-[#e0a955]" />
       </div>
       <div className="flex items-center gap-1.5 px-4 py-3 rounded-2xl rounded-tl-sm bg-[#111827] border border-[#1a2235]">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#d4a843] animate-bounce [animation-delay:-0.3s]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[#d4a843] animate-bounce [animation-delay:-0.15s]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[#d4a843] animate-bounce" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#e0a955] animate-bounce [animation-delay:-0.3s]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#e0a955] animate-bounce [animation-delay:-0.15s]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#e0a955] animate-bounce" />
       </div>
     </div>
   );
@@ -62,9 +62,9 @@ function MessageBubble({ message, onRegenerate, isLastAssistant }: { message: Me
   return (
     <div className={`anim-message flex gap-3 px-4 py-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
-        isUser ? "bg-[#1a3f7c] border border-[#143060]" : "bg-[#d4a843]/20 border border-[#d4a843]/40"
+        isUser ? "bg-[#1a3f7c] border border-[#143060]" : "bg-[#e0a955]/20 border border-[#e0a955]/40"
       }`}>
-        {isUser ? <User size={13} className="text-blue-300" /> : <Bot size={13} className="text-[#d4a843]" />}
+        {isUser ? <User size={13} className="text-blue-300" /> : <Bot size={13} className="text-[#e0a955]" />}
       </div>
       <div className={`max-w-[75%] flex flex-col gap-1.5 ${isUser ? "items-end" : "items-start"}`}>
         <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
@@ -83,7 +83,7 @@ function MessageBubble({ message, onRegenerate, isLastAssistant }: { message: Me
         </div>
         {message.downloadUrl && !isUser && (
           <a href={message.downloadUrl} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-[#d4a843]/15 border border-[#d4a843]/40 text-[#d4a843] hover:bg-[#d4a843]/25 transition-colors">
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm bg-[#e0a955]/15 border border-[#e0a955]/40 text-[#e0a955] hover:bg-[#e0a955]/25 transition-colors">
             <Download size={14} /> تحميل تقرير الترتيب (PDF)
           </a>
         )}
@@ -93,7 +93,7 @@ function MessageBubble({ message, onRegenerate, isLastAssistant }: { message: Me
             <button
               aria-label="نسخ الرد"
               onClick={() => navigator.clipboard.writeText(message.content)}
-              className="text-slate-600 hover:text-[#d4a843] transition-colors"
+              className="text-slate-600 hover:text-[#e0a955] transition-colors"
               title="نسخ">
               <Copy size={13} />
             </button>
@@ -102,7 +102,7 @@ function MessageBubble({ message, onRegenerate, isLastAssistant }: { message: Me
             <button
               aria-label="إعادة توليد الرد"
               onClick={onRegenerate}
-              className="text-slate-600 hover:text-[#d4a843] transition-colors"
+              className="text-slate-600 hover:text-[#e0a955] transition-colors"
               title="إعادة التوليد">
               <RotateCcw size={13} />
             </button>
@@ -432,7 +432,7 @@ export default function ChatPage() {
     <div className="flex h-screen bg-[#040d1a] overflow-hidden">
       <CommandPalette onNewChat={newConversation} />
       <Onboarding />
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:bg-[#d4a843] focus:text-[#040d1a] focus:px-3 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium">تخطّي إلى المحتوى</a>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:bg-[#e0a955] focus:text-[#040d1a] focus:px-3 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium">تخطّي إلى المحتوى</a>
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/60 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
@@ -441,16 +441,16 @@ export default function ChatPage() {
       <aside className={`fixed md:relative z-30 md:z-auto w-64 h-full flex flex-col bg-[#071428] border-r border-[#0d2144] transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <div className="flex items-center justify-between px-4 py-4 border-b border-[#0d2144]">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded bg-[#d4a843]/20 border border-[#d4a843]/40 flex items-center justify-center">
-              <Shield size={14} className="text-[#d4a843]" />
+            <div className="w-7 h-7 rounded bg-[#e0a955]/20 border border-[#e0a955]/40 flex items-center justify-center">
+              <Shield size={14} className="text-[#e0a955]" />
             </div>
             <span className="font-semibold text-sm text-slate-100">FeTo Enterprise</span>
           </div>
           <button aria-label="إغلاق القائمة" onClick={() => setSidebarOpen(false)} className="md:hidden text-slate-500 hover:text-slate-300"><X size={16} /></button>
         </div>
         <div className="p-3">
-          <button onClick={newConversation} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/30 transition-colors">
-            <Plus size={14} className="text-[#d4a843]" /> New conversation
+          <button onClick={newConversation} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-[#0d2144] border border-[#1a2235] hover:border-[#e0a955]/30 transition-colors">
+            <Plus size={14} className="text-[#e0a955]" /> New conversation
             <kbd className="ml-auto text-[10px] text-slate-600 border border-[#1a2235] rounded px-1.5 py-0.5">⌘K</kbd>
           </button>
         </div>
@@ -478,9 +478,9 @@ export default function ChatPage() {
               <Icon size={14} />{label}
             </Link>
           ))}
-          <Link href="/login" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 transition-colors">
+          <button onClick={async()=>{await fetch("/api/auth/logout",{method:"POST"});window.location.href="/";}} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 transition-colors w-full text-left">
             <LogOut size={14} /> Sign out
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -492,8 +492,8 @@ export default function ChatPage() {
           </button>
           <div className="relative">
             <button aria-label="اختيار الوكيل" aria-haspopup="listbox" aria-expanded={agentDropdown} onClick={() => setAgentDropdown(!agentDropdown)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/40 text-slate-300 transition-colors">
-              <Bot size={13} className="text-[#d4a843]" />
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-[#0d2144] border border-[#1a2235] hover:border-[#e0a955]/40 text-slate-300 transition-colors">
+              <Bot size={13} className="text-[#e0a955]" />
               {agentOptions.find((a) => a.id === selectedAgent)?.name || "Auto"}
               <ChevronDown size={12} className="text-slate-500" />
             </button>
@@ -501,7 +501,7 @@ export default function ChatPage() {
               <div className="anim-scale absolute top-full left-0 mt-1 w-56 bg-[#0d2144] border border-[#1a2235] rounded-xl shadow-elev-2 z-10 py-1 max-h-72 overflow-y-auto">
                 {agentOptions.map((a) => (
                   <button key={a.id} onClick={() => { setSelectedAgent(a.id); setAgentDropdown(false); }}
-                    className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[#143060] ${selectedAgent === a.id ? "text-[#d4a843]" : "text-slate-300"}`}>
+                    className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[#143060] ${selectedAgent === a.id ? "text-[#e0a955]" : "text-slate-300"}`}>
                     {a.name}
                   </button>
                 ))}
@@ -519,9 +519,9 @@ export default function ChatPage() {
           {activeConv.messages.length === 0 ? (
             <div className="anim-fade flex flex-col items-center justify-center h-full gap-6 px-4">
               <div className="relative w-16 h-16 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-2xl bg-[#d4a843]/25 blur-2xl animate-pulse" />
-                <div className="relative w-14 h-14 rounded-2xl bg-[#d4a843]/10 border border-[#d4a843]/30 flex items-center justify-center">
-                  <Shield size={24} className="text-[#d4a843]" />
+                <div className="absolute inset-0 rounded-2xl bg-[#e0a955]/25 blur-2xl animate-pulse" />
+                <div className="relative w-14 h-14 rounded-2xl bg-[#e0a955]/10 border border-[#e0a955]/30 flex items-center justify-center">
+                  <Shield size={24} className="text-[#e0a955]" />
                 </div>
               </div>
               <div className="text-center">
@@ -531,7 +531,7 @@ export default function ChatPage() {
               <div className="grid grid-cols-2 gap-2 w-full max-w-md">
                 {["What is Zero Trust Architecture?", "Explain CBE cybersecurity framework", "Ransomware response playbook", "T24 core banking best practices"].map((q) => (
                   <button key={q} onClick={() => setInput(q)}
-                    className="text-left px-3 py-2.5 rounded-xl text-xs text-slate-400 bg-[#071428] border border-[#0d2144] hover:border-[#d4a843]/30 hover:text-slate-300 hover:-translate-y-0.5 transition-all duration-150 leading-relaxed">
+                    className="text-left px-3 py-2.5 rounded-xl text-xs text-slate-400 bg-[#071428] border border-[#0d2144] hover:border-[#e0a955]/30 hover:text-slate-300 hover:-translate-y-0.5 transition-all duration-150 leading-relaxed">
                     {q}
                   </button>
                 ))}
@@ -558,7 +558,7 @@ export default function ChatPage() {
           {/* Attached file preview */}
           {attachedFile && (
             <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg bg-[#0d2144] border border-[#1a3f7c]/50 text-xs text-slate-300">
-              {attachedFile.type.startsWith("image/") ? <Image size={12} className="text-[#d4a843]" /> : <FileText size={12} className="text-[#d4a843]" />}
+              {attachedFile.type.startsWith("image/") ? <Image size={12} className="text-[#e0a955]" /> : <FileText size={12} className="text-[#e0a955]" />}
               <span className="truncate flex-1">{attachedFile.name}</span>
               <span className="text-slate-600">{(attachedFile.size / 1024).toFixed(0)}KB</span>
               <button aria-label="إزالة الملف المرفق" onClick={() => { setAttachedFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
@@ -572,7 +572,7 @@ export default function ChatPage() {
               accept=".pdf,.docx,.doc,.txt,.csv,.md,.jpg,.jpeg,.png,.webp,.gif"
               onChange={handleFileSelect} />
             <button aria-label="إرفاق ملف" onClick={() => fileInputRef.current?.click()} disabled={loading}
-              className="w-9 h-9 rounded-xl bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/40 flex items-center justify-center text-slate-400 hover:text-[#d4a843] transition-colors flex-shrink-0 disabled:opacity-30"
+              className="w-9 h-9 rounded-xl bg-[#0d2144] border border-[#1a2235] hover:border-[#e0a955]/40 flex items-center justify-center text-slate-400 hover:text-[#e0a955] transition-colors flex-shrink-0 disabled:opacity-30"
               title="Attach file (PDF, Word, image, text)">
               <Paperclip size={15} />
             </button>
@@ -586,8 +586,8 @@ export default function ChatPage() {
                 isRecording
                   ? "bg-red-600 hover:bg-red-700 border border-red-500 text-white animate-pulse"
                   : isTranscribing
-                  ? "bg-[#0d2144] border border-[#d4a843]/40 text-[#d4a843]"
-                  : "bg-[#0d2144] border border-[#1a2235] hover:border-[#d4a843]/40 text-slate-400 hover:text-[#d4a843]"
+                  ? "bg-[#0d2144] border border-[#e0a955]/40 text-[#e0a955]"
+                  : "bg-[#0d2144] border border-[#1a2235] hover:border-[#e0a955]/40 text-slate-400 hover:text-[#e0a955]"
               }`}
               title={isRecording ? "Stop recording" : isTranscribing ? "Transcribing..." : "Record voice message"}>
               {isTranscribing ? <Loader2 size={15} className="animate-spin" /> : isRecording ? <StopCircle size={15} /> : <Mic size={15} />}
@@ -603,7 +603,7 @@ export default function ChatPage() {
                 placeholder={isRecording ? "Recording... tap stop when done" : attachedFile ? "Add a message about the file (optional)..." : "Ask FeTo anything..."}
                 rows={1}
                 disabled={loading || isRecording}
-                className="w-full resize-none rounded-xl bg-[#0d2144] border border-[#1a2235] focus:border-[#d4a843]/50 text-sm text-slate-200 placeholder-slate-600 px-4 py-3 outline-none transition-colors leading-relaxed disabled:opacity-60"
+                className="w-full resize-none rounded-xl bg-[#0d2144] border border-[#1a2235] focus:border-[#e0a955]/50 text-sm text-slate-200 placeholder-slate-600 px-4 py-3 outline-none transition-colors leading-relaxed disabled:opacity-60"
                 style={{ maxHeight: "160px" }}
                 onInput={(e) => {
                   const t = e.currentTarget;
@@ -618,7 +618,7 @@ export default function ChatPage() {
               aria-label={loading ? "إيقاف" : "إرسال الرسالة"}
               onClick={loading ? () => { revealCancelRef.current = true; } : handleSend}
               disabled={(!input.trim() && !attachedFile) && !loading || isRecording}
-              className="w-10 h-10 rounded-xl bg-[#d4a843] hover:bg-[#c49a2a] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0">
+              className="w-10 h-10 rounded-xl bg-[#e0a955] hover:bg-[#eab667] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors flex-shrink-0">
               {loading ? <StopCircle size={16} className="text-[#040d1a]" /> : <Send size={16} className="text-[#040d1a]" />}
             </button>
           </div>

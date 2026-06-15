@@ -153,7 +153,7 @@ function LoginInner() {
                 </span>
                 <span className="text-sm text-slate-400 group-hover:text-slate-300">Remember me</span>
               </label>
-              <a href="/login?reason=reset" className="text-sm text-[#e0a955] hover:text-[#f0bd6e] transition-colors">
+              <a href="/forgot-password" className="text-sm text-[#e0a955] hover:text-[#f0bd6e] transition-colors">
                 Forgot password?
               </a>
             </div>

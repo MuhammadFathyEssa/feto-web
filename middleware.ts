@@ -7,14 +7,33 @@ const PUBLIC_PATHS = ["/login", "/api/auth/login"];
 // Pages + APIs only owner/admin may reach
 const ADMIN_PATHS = ["/admin", "/dashboard", "/api/users"];
 
+// Canonical domain — every other host (e.g. the *.vercel.app preview/default
+// subdomain) is 301-redirected here so only feto.live is publicly reachable.
+const CANONICAL_HOST = "feto.live";
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+<<<<<<< HEAD
   // Allow public marketing routes (exact match for landing root)
   if (PUBLIC_EXACT.includes(pathname)) {
     return NextResponse.next();
   }
   // Allow public paths (prefix match)
+=======
+  // ── Canonical host enforcement ────────────────────────────────
+  // Runs before auth so the vercel.app subdomain never serves content.
+  const host = req.headers.get("host") || "";
+  if (host !== CANONICAL_HOST && host.endsWith(".vercel.app")) {
+    const url = new URL(req.url);
+    url.host = CANONICAL_HOST;
+    url.protocol = "https:";
+    url.port = "";
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Allow public paths
+>>>>>>> 6859be366fdff78fc90c582394828ec5a023d26e
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }

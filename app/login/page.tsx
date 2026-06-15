@@ -112,7 +112,7 @@ function LoginInner() {
           <span>اتصال مُشفّر · وصول مُتحكَّم فيه بالأدوار</span>
         </div>
         <p className="text-center text-xs text-slate-600 mt-6">
-          Banque Du Caire · Technology Services &amp; IT Operations
+          FeTo Executive Intelligence Platform
         </p>
       </div>
     </div>

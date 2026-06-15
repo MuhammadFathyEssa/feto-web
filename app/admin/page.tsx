@@ -100,7 +100,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[#040d1a] text-slate-200">
       <header className="border-b border-[#0d2144] bg-[#071428] px-6 py-4 flex items-center gap-4">
-        <Link href="/" className="text-slate-400 hover:text-slate-200 transition-colors">
+        <Link href="/app" className="text-slate-400 hover:text-slate-200 transition-colors">
           <ArrowLeft size={18} aria-label="رجوع" />
         </Link>
         <div className="flex items-center gap-2">

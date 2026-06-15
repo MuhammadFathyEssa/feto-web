@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken, refreshActivity, COOKIE_NAME } from "@/lib/auth";
 
+// Public marketing routes — reachable without authentication
+const PUBLIC_EXACT = ["/"];
 const PUBLIC_PATHS = ["/login", "/api/auth/login"];
 // Pages + APIs only owner/admin may reach
 const ADMIN_PATHS = ["/admin", "/dashboard", "/api/users"];
@@ -8,7 +10,11 @@ const ADMIN_PATHS = ["/admin", "/dashboard", "/api/users"];
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Allow public paths
+  // Allow public marketing routes (exact match for landing root)
+  if (PUBLIC_EXACT.includes(pathname)) {
+    return NextResponse.next();
+  }
+  // Allow public paths (prefix match)
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }

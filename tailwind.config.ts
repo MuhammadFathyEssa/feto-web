@@ -17,7 +17,8 @@ const config: Config = {
           600: "#1a3f7c",
         },
         gold: {
-          400: "#d4a843",
+          300: "#eab667",
+          400: "#e0a955",
           500: "#c49a2a",
           600: "#a07d1a",
         },
@@ -40,9 +41,11 @@ const config: Config = {
         "elev-1": "0 1px 2px rgba(0,0,0,0.25)",
         "elev-2": "0 4px 12px rgba(0,0,0,0.35)",
         "elev-3": "0 12px 32px rgba(0,0,0,0.45)",
+        "gold-glow": "0 8px 24px -8px rgba(224,169,85,0.5)",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Playfair Display", "Georgia", "serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
     },

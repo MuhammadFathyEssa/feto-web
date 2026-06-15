@@ -63,7 +63,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-[#040d1a] text-slate-200">
       <header className="border-b border-[#0d2144] bg-[#071428] px-6 py-4 flex items-center gap-4">
-        <Link href="/" className="text-slate-400 hover:text-slate-200 transition-colors">
+        <Link href="/app" className="text-slate-400 hover:text-slate-200 transition-colors">
           <ArrowLeft size={18} />
         </Link>
         <div className="flex items-center gap-2">

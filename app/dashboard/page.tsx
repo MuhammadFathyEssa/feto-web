@@ -49,7 +49,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#040d1a] text-slate-200">
       {/* Header */}
       <header className="border-b border-[#0d2144] bg-[#071428] px-6 py-4 flex items-center gap-4">
-        <Link href="/" className="text-slate-400 hover:text-slate-200 transition-colors">
+        <Link href="/app" className="text-slate-400 hover:text-slate-200 transition-colors">
           <ArrowLeft size={18} />
         </Link>
         <div className="flex items-center gap-2">
@@ -202,7 +202,7 @@ export default function DashboardPage() {
         {/* Quick actions */}
         <div className="flex flex-wrap gap-3">
           <Link
-            href="/"
+            href="/app"
             className="flex items-center gap-2 bg-[#d4a843] text-[#040d1a] text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#e0b855] transition-colors"
           >
             <MessageSquare size={15} /> Open Chat

@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: "منصة ذكاء اصطناعي تنفيذية مخصصة للقطاع المصرفي والمؤسسات المالية. 13 وكيل ذكاء اصطناعي متخصص، أمان بمعايير banking-grade.",
   metadataBase: new URL("https://feto.live"),
   keywords: ["AI banking", "executive AI assistant", "FeTo", "فيتو", "ذكاء اصطناعي", "قطاع مصرفي", "banking AI", "financial AI"],
+  verification: { google: "AGXRYf1ZDZXwjGB2sTHP_GSPje6hV0458Ure9U_LJSE" },
   openGraph: {
     title: "FeTo — منصة الذكاء الاصطناعي التنفيذي",
     description: "منصة ذكاء اصطناعي تنفيذية مخصصة للقطاع المصرفي والمؤسسات المالية. 13 وكيل ذكاء اصطناعي متخصص.",

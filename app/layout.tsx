@@ -3,8 +3,26 @@ import "./globals.css";
 import IdleTimeout from "./components/IdleTimeout";
 
 export const metadata: Metadata = {
-  title: "FeTo — Enterprise AI Assistant",
-  description: "Enterprise AI Operating System for banking and financial institutions",
+  title: "FeTo — منصة الذكاء الاصطناعي التنفيذي",
+  description: "منصة ذكاء اصطناعي تنفيذية مخصصة للقطاع المصرفي والمؤسسات المالية. 13 وكيل ذكاء اصطناعي متخصص، أمان بمعايير banking-grade.",
+  metadataBase: new URL("https://feto.live"),
+  keywords: ["AI banking", "executive AI assistant", "FeTo", "فيتو", "ذكاء اصطناعي", "قطاع مصرفي", "banking AI", "financial AI"],
+  openGraph: {
+    title: "FeTo — منصة الذكاء الاصطناعي التنفيذي",
+    description: "منصة ذكاء اصطناعي تنفيذية مخصصة للقطاع المصرفي والمؤسسات المالية. 13 وكيل ذكاء اصطناعي متخصص.",
+    url: "https://feto.live",
+    siteName: "FeTo",
+    locale: "ar_EG",
+    type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "FeTo — منصة الذكاء الاصطناعي التنفيذي" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FeTo — منصة الذكاء الاصطناعي التنفيذي",
+    description: "منصة ذكاء اصطناعي تنفيذية مخصصة للقطاع المصرفي والمؤسسات المالية.",
+    images: ["/og-image.png"],
+  },
+  robots: { index: true, follow: true },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "FeTo" },
 };
@@ -18,7 +36,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="ar">
       <body className="bg-[#040d1a] text-slate-200 antialiased">
         <IdleTimeout />
         {children}

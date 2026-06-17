@@ -231,7 +231,7 @@ export default function LandingPage() {
               <div style={{padding:"14px 18px",borderBottom:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",gap:10}}>
                 <span style={{fontSize:13,color:"var(--gold)",fontWeight:600,letterSpacing:1}}>CHAT INTERFACE</span>
               </div>
-              <img src="/screenshots/chat.jpg" alt="FeTo executive chat interface" style={{width:"100%",display:"block"}} loading="lazy" />
+              <img src="/screenshots/screenshot-chat.jpeg" alt="FeTo executive chat interface" style={{width:"100%",display:"block"}} loading="lazy" />
               <div style={{padding:"16px 18px"}}>
                 <p style={{fontSize:13,color:"var(--slate)",margin:0,lineHeight:1.6}}>A personalized session — FeTo knows the executive, their context, and their domain.</p>
               </div>
@@ -240,7 +240,7 @@ export default function LandingPage() {
               <div style={{padding:"14px 18px",borderBottom:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",gap:10}}>
                 <span style={{fontSize:13,color:"var(--gold)",fontWeight:600,letterSpacing:1}}>RECRUITER AGENT</span>
               </div>
-              <img src="/screenshots/recruiter.jpg" alt="FeTo Recruiter AI agent" style={{width:"100%",display:"block"}} loading="lazy" />
+              <img src="/screenshots/screenshot-recruiter.jpeg" alt="FeTo Recruiter AI agent" style={{width:"100%",display:"block"}} loading="lazy" />
               <div style={{padding:"16px 18px"}}>
                 <p style={{fontSize:13,color:"var(--slate)",margin:0,lineHeight:1.6}}>The Recruiter agent — evaluate CVs, generate JDs, run interview prep, compare candidates.</p>
               </div>
@@ -256,7 +256,7 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="founder-inner reveal" style={{display:"grid",gridTemplateColumns:"auto 1fr",gap:48,alignItems:"center",maxWidth:860,margin:"0 auto"}}>
             <div className="founder-photo" style={{flexShrink:0}}>
-              <img src="/founder-photo.jpg" alt="Dr. Muhammad Fathy — CEO & Founder, FeTo" style={{width:200,height:200,borderRadius:"50%",objectFit:"cover",objectPosition:"center top",border:"3px solid var(--gold)",display:"block"}} loading="lazy" />
+              <img src="/founder-photo.jpeg" alt="Dr. Muhammad Fathy — CEO & Founder, FeTo" style={{width:200,height:200,borderRadius:"50%",objectFit:"cover",objectPosition:"center top",border:"3px solid var(--gold)",display:"block"}} loading="lazy" />
             </div>
             <div>
               <span className="eyebrow">Built by an executive, for executives</span>

@@ -123,7 +123,8 @@ export default function LandingPage() {
                 <p className="hero-lede h-anim d3">FeTo is an intelligence platform where thirteen specialized AI agents reason together — in Arabic and English — for the institutions that run the region.</p>
                 <div className="hero-actions h-anim d4">
                   <Link href="/request-access" className="btn-primary">Request access</Link>
-                  <a href="#platform" className="btn-ghost">See the platform</a>
+                  <a href="https://calendly.com/eng-mfathy" target="_blank" rel="noopener noreferrer" className="btn-ghost">Book a Demo</a>
+                  <a href="#platform" className="btn-ghost" style={{fontSize:13,opacity:0.6}}>See the platform</a>
                 </div>
                 <div className="hero-meta h-anim d5">
                   <div className="item"><span className="n serif">13</span><span className="l">Specialized agents</span></div>
@@ -217,6 +218,62 @@ export default function LandingPage() {
 
       <div className="wrap"><div className="divider" /></div>
 
+      {/* ── Platform in Action ── */}
+      <section className="platform-screens" style={{padding:"80px 0"}}>
+        <div className="wrap">
+          <div className="reveal" style={{textAlign:"center",marginBottom:48}}>
+            <span className="eyebrow">Platform in action</span>
+            <h2 style={{marginTop:12}}>Built for the way <em>executives actually work.</em></h2>
+            <p style={{maxWidth:560,margin:"16px auto 0",color:"var(--slate)",lineHeight:1.7}}>Two of the thirteen agents — a glimpse of the council at work inside a real session.</p>
+          </div>
+          <div className="screens-grid reveal" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:32,alignItems:"start"}}>
+            <div className="screen-card" style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,overflow:"hidden"}}>
+              <div style={{padding:"14px 18px",borderBottom:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontSize:13,color:"var(--gold)",fontWeight:600,letterSpacing:1}}>CHAT INTERFACE</span>
+              </div>
+              <img src="/screenshots/screenshot-chat.jpeg" alt="FeTo executive chat interface" style={{width:"100%",display:"block"}} loading="lazy" />
+              <div style={{padding:"16px 18px"}}>
+                <p style={{fontSize:13,color:"var(--slate)",margin:0,lineHeight:1.6}}>A personalized session — FeTo knows the executive, their context, and their domain.</p>
+              </div>
+            </div>
+            <div className="screen-card" style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,overflow:"hidden"}}>
+              <div style={{padding:"14px 18px",borderBottom:"1px solid rgba(255,255,255,0.06)",display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontSize:13,color:"var(--gold)",fontWeight:600,letterSpacing:1}}>RECRUITER AGENT</span>
+              </div>
+              <img src="/screenshots/screenshot-recruiter.jpeg" alt="FeTo Recruiter AI agent" style={{width:"100%",display:"block"}} loading="lazy" />
+              <div style={{padding:"16px 18px"}}>
+                <p style={{fontSize:13,color:"var(--slate)",margin:0,lineHeight:1.6}}>The Recruiter agent — evaluate CVs, generate JDs, run interview prep, compare candidates.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="wrap"><div className="divider" /></div>
+
+      {/* ── About the Founder ── */}
+      <section className="founder-section" style={{padding:"80px 0"}}>
+        <div className="wrap">
+          <div className="founder-inner reveal" style={{display:"grid",gridTemplateColumns:"auto 1fr",gap:48,alignItems:"center",maxWidth:860,margin:"0 auto"}}>
+            <div className="founder-photo" style={{flexShrink:0}}>
+              <img src="/founder-photo.jpeg" alt="Dr. Muhammad Fathy — CEO & Founder, FeTo" style={{width:200,height:200,borderRadius:"50%",objectFit:"cover",objectPosition:"center top",border:"3px solid var(--gold)",display:"block"}} loading="lazy" />
+            </div>
+            <div>
+              <span className="eyebrow">Built by an executive, for executives</span>
+              <h2 style={{marginTop:12,fontSize:"clamp(1.4rem,3vw,2rem)"}}>The mind <em>behind the platform.</em></h2>
+              <p style={{color:"var(--slate)",lineHeight:1.8,marginTop:14,fontSize:15}}>Dr. Muhammad Fathy is CEO &amp; Founder of FeTo and GM &amp; Head of Technology Services at one of Egypt&apos;s largest banks — 150 engineers, 200+ systems, 20 million customers. 25 years. Published author of 7 books. LEAP speaker. IDC Excellence Award 2025.</p>
+              <p style={{color:"var(--slate)",lineHeight:1.8,marginTop:10,fontSize:15}}>FeTo was built from direct experience — the platform he needed and couldn&apos;t find.</p>
+              <div style={{marginTop:22,display:"flex",gap:16,flexWrap:"wrap"}}>
+                <a href="https://muhammadfathy.com" target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{fontSize:13,padding:"8px 18px"}}>Full profile →</a>
+                <a href="https://calendly.com/eng-mfathy" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{fontSize:13,padding:"8px 18px"}}>Book a conversation</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="wrap"><div className="divider" /></div>
+
       <section id="vision" className="vision">
         <div className="wrap">
           <div className="vision-inner reveal">
@@ -236,7 +293,7 @@ export default function LandingPage() {
             <p>FeTo is currently available to a select group of institutions and leaders. Request access and see what an executive council of AI agents can do.</p>
             <div className="cta-actions">
               <Link href="/request-access" className="btn-primary">Request access</Link>
-              <a href="#platform" className="btn-ghost">Explore the platform</a>
+              <a href="https://calendly.com/eng-mfathy" target="_blank" rel="noopener noreferrer" className="btn-ghost">Book a Demo</a>
             </div>
           </div>
         </div>

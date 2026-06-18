@@ -470,6 +470,7 @@ export default function ChatPage() {
           {[
             { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
             { href: "/recruiter", icon: Users, label: "Recruiter", adminOnly: false },
+            { href: "/cyber", icon: Shield, label: "Threat Intel", adminOnly: false },
             { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
             { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
           ].filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner")

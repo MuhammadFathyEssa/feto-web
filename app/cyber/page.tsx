@@ -43,14 +43,21 @@ export default function CyberPage() {
   const generate = useCallback(async () => {
     setLoading(true);
     setError(null);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 90000); // 90s ceiling
     try {
-      const res = await fetch(`/api/proxy/threat-briefing?scope=${scope}&days=7`, { cache: "no-store" });
+      const res = await fetch(`/api/proxy/threat-briefing?scope=${scope}&days=7`, { cache: "no-store", signal: controller.signal });
       const json: BriefingResponse = await res.json();
       if (!json.success) { setError(json.error || "Generation failed"); setData(null); }
       else setData(json);
-    } catch {
-      setError("Network error — try again");
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") {
+        setError("The briefing is taking longer than expected (NVD may be slow). Please try again.");
+      } else {
+        setError("Network error — try again");
+      }
     } finally {
+      clearTimeout(timer);
       setLoading(false);
     }
   }, [scope]);

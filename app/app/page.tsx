@@ -9,7 +9,7 @@ import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
   Shield, ChevronDown, Bot, User, AlertCircle, Loader2,
   Menu, X, LogOut, Users, Zap, Paperclip, Mic, MicOff,
-  FileText, Image, StopCircle, Download, Copy, RotateCcw
+  FileText, Image, StopCircle, Download, Copy, RotateCcw, Newspaper
 } from "lucide-react";
 import Link from "next/link";
 
@@ -471,6 +471,7 @@ export default function ChatPage() {
             { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
             { href: "/recruiter", icon: Users, label: "Recruiter", adminOnly: false },
             { href: "/cyber", icon: Shield, label: "Threat Intel", adminOnly: false },
+            { href: "/cybernews", icon: Newspaper, label: "Cyber News", adminOnly: false },
             { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
             { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
           ].filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner")

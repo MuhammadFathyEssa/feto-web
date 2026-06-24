@@ -153,15 +153,13 @@ export default function LearnPage() {
   const isLesson = hasReadySignal && !isProfileSummary;
   const isEval   = /score:|الدرجة:|تقييم|الدرس الجاي|next step|استمر/i.test(lastAssistant);
 
-  async function callTutor(message: string, history: Turn[]) {
+  async function callTutor(message: string, _history: Turn[]) {
     setLoading(true); setError("");
     try {
-      // Send the full conversation history so the backend never loses context
-      const historyPayload = history.map(t => ({ role: t.role, content: t.content }));
       const res = await fetch("/api/proxy/learn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history: historyPayload, lang }),
+        body: JSON.stringify({ message, lang }),
       });
       const data = await res.json();
       if (!data.reply && !data.response) {

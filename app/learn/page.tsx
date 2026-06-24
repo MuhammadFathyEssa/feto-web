@@ -29,7 +29,10 @@ const T = {
     back: "رجوع", loadingTest: "جاري تحضير الاختبار…",
     testError: "حصل خطأ في تحضير الاختبار.",
     answerAll: "أجب على كل الأسئلة أولاً",
-    savedMsg: "✓ تم نسخ محتوى الدرس",
+    savedMsg: "✓ تم حفظ الجلسة — يمكنك الاستئناف لاحقاً",
+    resumeBtn: "استأنف الجلسة السابقة",
+    resumeLabel: (topic: string) => `موضوع: ${topic}`,
+    noResume: "بدء جلسة جديدة",
   },
   en: {
     title: "Learn", chooseLang: "Choose your language",
@@ -46,7 +49,10 @@ const T = {
     back: "Back", loadingTest: "Preparing your test…",
     testError: "Could not generate test questions.",
     answerAll: "Please answer all questions first",
-    savedMsg: "✓ Lesson content copied",
+    savedMsg: "✓ Session saved — you can resume later",
+    resumeBtn: "Resume previous session",
+    resumeLabel: (topic: string) => `Topic: ${topic}`,
+    noResume: "Start a new session",
   },
 };
 
@@ -109,6 +115,18 @@ export default function LearnPage() {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState("");
   const [toast, setToast]         = useState("");
+  const [savedSession, setSavedSession] = useState<{topic:string;lang:Lang;turns:Turn[]} | null>(null);
+
+  // Load saved session from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("feto_learn_session");
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s?.topic && s?.turns?.length) setSavedSession(s);
+      }
+    } catch {}
+  }, []);
   const bottomRef = useRef<HTMLDivElement>(null);
   const t = T[lang];
   const isRTL = lang === "ar";
@@ -126,8 +144,14 @@ export default function LearnPage() {
   }, [phase, pendingMsg]);  // eslint-disable-line
 
   const lastAssistant = [...turns].reverse().find(x => x.role === "assistant")?.content ?? "";
-  const isLesson = /خد وقتك|ولما تكون جاهز|when you('| a)re ready|say\s*ready/i.test(lastAssistant);
-  const isEval   = /score:|الدرجة:|تقييم|الدرس الجاي|next step|next lesson/i.test(lastAssistant);
+  const assistantCount = turns.filter(x => x.role === "assistant").length;
+  // Profile summary = first assistant message containing "ملفك التعليمي" or "فهمت:"
+  const isProfileSummary = assistantCount === 1 &&
+    /ملفك التعليمي|فهمت:|learning profile|your profile/i.test(lastAssistant);
+  // Lesson step = has ready signal but NOT the profile summary
+  const hasReadySignal = /خد وقتك|ولما تكون جاهز|when you('| a)re ready|say\s*ready/i.test(lastAssistant);
+  const isLesson = hasReadySignal && !isProfileSummary;
+  const isEval   = /score:|الدرجة:|تقييم|الدرس الجاي|next step|استمر/i.test(lastAssistant);
 
   async function callTutor(message: string, history: Turn[]) {
     setLoading(true); setError("");
@@ -163,11 +187,27 @@ export default function LearnPage() {
   // submitTestAnswers removed — answers sent via regular text input
 
   function saveLesson() {
-    const content = turns.filter(x => x.role === "assistant").map(x => x.content).join("\n\n---\n\n");
-    navigator.clipboard?.writeText(content).then(() => {
-      setToast(t.savedMsg);
-      setTimeout(() => setToast(""), 2500);
-    });
+    // Save session to localStorage for later resumption
+    try {
+      const session = { topic, lang, turns, phase };
+      localStorage.setItem("feto_learn_session", JSON.stringify(session));
+    } catch {}
+    setToast(t.savedMsg);
+    setTimeout(() => setToast(""), 2500);
+  }
+
+  function resumeSession() {
+    if (!savedSession) return;
+    setTopic(savedSession.topic);
+    setLang(savedSession.lang);
+    setTurns(savedSession.turns);
+    setPhase("lesson");
+    setSavedSession(null);
+  }
+
+  function clearSavedSession() {
+    localStorage.removeItem("feto_learn_session");
+    setSavedSession(null);
   }
 
   async function endSession() {
@@ -207,6 +247,11 @@ export default function LearnPage() {
   function restart() {
     setPhase("topic"); setTopic(""); setDStep(0); setDAnswers({});
     setTurns([]); setInput(""); setError("");
+    // Reload saved session check
+    try {
+      const raw = localStorage.getItem("feto_learn_session");
+      if (raw) { const s = JSON.parse(raw); if (s?.topic) setSavedSession(s); }
+    } catch {}
   }
 
   const curQ = questions[dStep];
@@ -252,6 +297,23 @@ export default function LearnPage() {
                   </button>
                 ))}
               </div>
+              {/* Resume saved session */}
+              {savedSession && (
+                <div className="mb-4 p-3 rounded-lg bg-[#e0a955]/8 border border-[#e0a955]/30">
+                  <p className="text-xs text-[#e0a955] mb-2">📌 {t.resumeBtn}</p>
+                  <p className="text-xs text-slate-400 mb-3">{t.resumeLabel(savedSession.topic)}</p>
+                  <div className="flex gap-2">
+                    <button onClick={resumeSession}
+                      className="flex-1 py-2 rounded-lg bg-[#e0a955] text-black text-sm font-semibold">
+                      {t.resumeBtn}
+                    </button>
+                    <button onClick={clearSavedSession}
+                      className="px-3 py-2 rounded-lg border border-[#1a3f7c]/40 text-slate-400 text-xs">
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
               <input value={topic} onChange={e => setTopic(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && goDiscovery()}
                 placeholder={t.topicPlaceholder} dir="auto"
@@ -319,13 +381,22 @@ export default function LearnPage() {
           {/* Action bar */}
           {!loading && lastAssistant && phase !== "done" && (
             <div className={`px-4 pb-2 flex gap-2 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
+                {/* After profile summary — show "كمل" to start first lesson */}
+              {isProfileSummary && (
+                <button onClick={() => { const msg = lang === "ar" ? "كمل — ابدأ الدرس الأول" : "Continue — start the first lesson"; const ut: Turn = { role:"user", content: msg }; const nt=[...turns,ut]; setTurns(nt); callTutor(msg,nt); }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e0a955] text-black text-sm font-semibold">
+                  <PlayCircle size={14} /> {lang === "ar" ? "كمل" : "Continue"}
+                </button>
+              )}
+              {/* After a lesson step — ready for test */}
               {isLesson && (
                 <button onClick={requestTest}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e0a955] text-black text-sm font-semibold">
                   <CheckCircle2 size={14} /> {t.readyBtn}
                 </button>
               )}
-              {isEval && (
+              {/* After evaluation — continue to next step */}
+              {isEval && !isLesson && (
                 <button onClick={() => { const msg = lang === "ar" ? "استمر — الخطوة الجاية" : "Continue — next step"; const ut: Turn = { role:"user", content: msg }; const nt=[...turns,ut]; setTurns(nt); callTutor(msg,nt); }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e0a955] text-black text-sm font-semibold">
                   <PlayCircle size={14} /> {t.continueBtn}
@@ -342,6 +413,15 @@ export default function LearnPage() {
             </div>
           )}
 
+          {/* After session ends — offer to start new topic */}
+          {phase === "done" && !loading && (
+            <div className="px-4 pb-3 pt-1">
+              <button onClick={restart}
+                className="w-full py-2.5 rounded-lg border border-[#e0a955]/40 text-[#e0a955] text-sm font-medium hover:bg-[#e0a955]/10 flex items-center justify-center gap-2">
+                <RotateCcw size={15} /> {lang === "ar" ? "ابدأ موضوع جديد" : "Start a new topic"}
+              </button>
+            </div>
+          )}
           {/* Input */}
           {phase !== "done" && (
             <div className="px-4 pb-5 pt-2 border-t border-[#1a3f7c]/20 flex-shrink-0">

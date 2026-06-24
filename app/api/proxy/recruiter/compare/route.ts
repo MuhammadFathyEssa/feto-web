@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 
+export const dynamic = 'force-dynamic';
+
 const BACKEND_URL = process.env.BACKEND_URL || "";
 const API_KEY = process.env.BACKEND_API_KEY || "";
 export const runtime = "nodejs";

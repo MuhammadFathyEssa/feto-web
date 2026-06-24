@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { getSession, getUserById, updatePassword } from "@/lib/auth";
 import { logAdminAction } from "@/lib/auditLog";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();

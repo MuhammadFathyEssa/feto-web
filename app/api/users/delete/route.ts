@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, getUserById, deleteUser } from "@/lib/auth";
 import { logAdminAction } from "@/lib/auditLog";
 
+export const dynamic = 'force-dynamic';
+
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {

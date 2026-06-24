@@ -8,6 +8,8 @@ import {
 import { sendEmail, accessApprovedEmail, accessRejectedEmail } from "@/lib/email";
 import { logAdminAction } from "@/lib/auditLog";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ success: false, error: "Not authenticated" }, { status: 401 });

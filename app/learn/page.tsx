@@ -147,7 +147,7 @@ export default function LearnPage() {
   const isRTL = lang === "ar";
   const questions = DISCOVERY[lang];
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [turns, loading, dStep, testQs]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [turns, loading, dStep]);
 
   // Fire the initial tutor call only after phase=lesson is committed to DOM.
   useEffect(() => {
@@ -168,7 +168,7 @@ export default function LearnPage() {
   const isLesson = hasReadySignal && !isProfileSummary;
   const isEval   = /score:|الدرجة:|تقييم|الدرس الجاي|next step|استمر/i.test(lastAssistant);
 
-  async function callTutor(message: string, _history: Turn[]) {
+  async function callTutor(message: string, prevTurns: Turn[]) {
     setLoading(true); setError("");
     try {
       const res = await fetch("/api/proxy/learn", {
@@ -183,7 +183,7 @@ export default function LearnPage() {
         return;
       }
       const reply = data.reply || data.response;
-      setTurns([...history, { role: "assistant", content: reply }]);
+      setTurns([...prevTurns, { role: "assistant", content: reply }]);
     } catch { setError("Network error — please try again."); }
     finally { setLoading(false); }
   }

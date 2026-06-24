@@ -2,12 +2,19 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const _jwtSecret = process.env.JWT_SECRET;
-if (!_jwtSecret || _jwtSecret.length < 32) {
-  throw new Error(
-    "JWT_SECRET environment variable is required and must be at least 32 characters."
-  );
+// Lazy validation: only throw at runtime (request time), not at build time.
+// Next.js static analysis runs without env vars set, so module-level throws break builds.
+const JWT_SECRET = _jwtSecret && _jwtSecret.length >= 32
+  ? new TextEncoder().encode(_jwtSecret)
+  : null;
+
+function getJwtSecret() {
+  if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET environment variable is required and must be at least 32 characters.");
+  }
+  return JWT_SECRET;
 }
-const JWT_SECRET = new TextEncoder().encode(_jwtSecret);
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
 const COOKIE_NAME = "feto_session";
@@ -33,12 +40,12 @@ export async function signToken(user: SessionUser): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d") // absolute cap; idle timeout (12h) is the practical gate
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<SessionUser | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     const user = payload as unknown as SessionUser;
     // Enforce idle timeout — reject if inactive too long
     if (user.lastActivity && Date.now() - user.lastActivity > IDLE_TIMEOUT_MS) {

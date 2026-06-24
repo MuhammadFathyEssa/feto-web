@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from "next/server";
 import { createAccessRequest, getUserByEmail } from "@/lib/auth";
 import { peekRateLimit, recordFailedAttempt } from "@/lib/rateLimit";

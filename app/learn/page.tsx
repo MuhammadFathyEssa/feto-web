@@ -137,10 +137,12 @@ export default function LearnPage() {
   async function callTutor(message: string, history: Turn[]) {
     setLoading(true); setError("");
     try {
+      // Send the full conversation history so the backend never loses context
+      const historyPayload = history.map(t => ({ role: t.role, content: t.content }));
       const res = await fetch("/api/proxy/learn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, lang }),
+        body: JSON.stringify({ message, history: historyPayload, lang }),
       });
       const data = await res.json();
       if (!data.reply && !data.response) {

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://feto.live" },
+        { "key": "Vary", "value": "Origin" },
+        { "key": "X-Powered-By", "value": "" },
+        { "key": "Server", "value": "FeTo" }
+      ]
+    }
+  ]
+}

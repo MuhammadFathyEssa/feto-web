@@ -1,6 +1,10 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+<<<<<<< HEAD
+=======
+import ReactMarkdown from "react-markdown";
+>>>>>>> 0e6d388db66aeff77c905af95f6b4c1ffd90aaad
 import {
   ArrowLeft, GraduationCap, Loader2, Send,
   CheckCircle2, ChevronRight, RotateCcw, BookOpen,
@@ -73,6 +77,7 @@ const DISCOVERY: Record<Lang, { id: string; q: string; options: string[] }[]> = 
 };
 
 function MDContent({ content, dir }: { content: string; dir?: "ltr" | "rtl" | "auto" }) {
+<<<<<<< HEAD
   // Simple markdown-like rendering without external dependency
   const lines = content.split("\n");
   return (
@@ -100,6 +105,19 @@ function MDContent({ content, dir }: { content: string; dir?: "ltr" | "rtl" | "a
           </p>
         );
       })}
+=======
+  return (
+    <div dir={dir ?? "auto"}
+      className="prose prose-invert prose-sm max-w-none
+        prose-headings:text-slate-100 prose-headings:font-semibold prose-headings:mt-3 prose-headings:mb-1
+        prose-p:text-slate-300 prose-p:leading-relaxed prose-p:my-1.5
+        prose-code:text-[#e0a955] prose-code:bg-[#0a1830] prose-code:px-1 prose-code:rounded prose-code:text-xs
+        prose-pre:bg-[#040d1a] prose-pre:border prose-pre:border-[#1a3f7c]/40 prose-pre:rounded-lg prose-pre:text-xs
+        prose-strong:text-slate-100 prose-ul:text-slate-300 prose-ol:text-slate-300
+        prose-li:marker:text-[#e0a955] prose-li:my-0.5
+        prose-blockquote:border-[#e0a955]/40 prose-blockquote:text-slate-400">
+      <ReactMarkdown>{content}</ReactMarkdown>
+>>>>>>> 0e6d388db66aeff77c905af95f6b4c1ffd90aaad
     </div>
   );
 }

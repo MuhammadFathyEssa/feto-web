@@ -74,4 +74,12 @@ export const defaultAgents: Agent[] = [
   { id: "journalist", name: "Journalist & News Analyst", description: "Breaking news, press briefings, current events analysis" },
   { id: "sports",     name: "Sports Analyst",            description: "Football, Al-Ahly, Egypt team, taekwondo, World Cup 2026" },
   { id: "political",  name: "Political Analyst",         description: "Geopolitics, MENA analysis, Egypt foreign policy, GERD" },
+  { id: "innovation",  name: "Innovation Advisor",    description: "Three horizons, pilot design, fintech bets, GenAI value" },
+  { id: "board",       name: "Board Advisor",         description: "Board papers, governance, regulator comms, RAG reporting" },
+  { id: "investment",  name: "Investment Advisor",    description: "TCO/NPV, vendor negotiation, business case, Broadcom economics" },
+  { id: "negotiation", name: "Negotiation Coach",     description: "Fisher-Ury + Voss toolkit, prep sheet, Egyptian/GCC dynamics" },
+  { id: "coach",       name: "Executive Coach",       description: "Executive presence, managing up, GROW, MENA career trajectory" },
+  { id: "chiefofstaff",name: "Chief of Staff",        description: "Top-3 triage, delegation drafting, decision queue, memory" },
+  { id: "personality", name: "Personality Assessment",description: "8-stage diagnostic: motivation, leadership, trust, blind spots" },
+  { id: "tutor",       name: "Adaptive Tutor",        description: "Step-by-step teaching with testing on hard technical topics" },
 ];

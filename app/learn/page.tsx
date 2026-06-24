@@ -10,9 +10,8 @@ import {
 
 const GOLD = "#e0a955";
 type Lang = "ar" | "en";
-type Phase = "topic" | "discovery" | "lesson" | "test" | "done";
+type Phase = "topic" | "discovery" | "lesson" | "done";
 interface Turn { role: "user" | "assistant"; content: string; }
-interface TestQ { q: string; options: string[]; }
 
 const T = {
   ar: {
@@ -110,10 +109,6 @@ export default function LearnPage() {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState("");
   const [toast, setToast]         = useState("");
-  // Test state
-  const [testQs, setTestQs]       = useState<TestQ[]>([]);
-  const [testAns, setTestAns]     = useState<Record<number, string>>({});
-  const [testLoading, setTestLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const t = T[lang];
   const isRTL = lang === "ar";
@@ -156,38 +151,16 @@ export default function LearnPage() {
     finally { setLoading(false); }
   }
 
-  async function requestTest() {
-    // Guard: never request test with empty history
-    const assistantTurns = turns.filter(x => x.role === "assistant");
-    if (!assistantTurns.length) { setError(lang === "ar" ? "لازم تنتهي من الدرس الأول الأول." : "Please complete the first lesson first."); return; }
-    setTestLoading(true); setError("");
-    try {
-      const res = await fetch("/api/proxy/learn-test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ history: turns, lang }),
-      });
-      const data = await res.json();
-      if (data.success && data.questions?.length) {
-        setTestQs(data.questions);
-        setTestAns({});
-        setPhase("test");
-      } else { setError(t.testError); }
-    } catch { setError(t.testError); }
-    finally { setTestLoading(false); }
-  }
-
-  async function submitTestAnswers() {
-    if (Object.keys(testAns).length < testQs.length) { setError(t.answerAll); return; }
-    const ansText = testQs.map((q, i) => `Q${i+1}: ${q.q}\nAnswer: ${testAns[i]}`).join("\n\n");
-    const msg = lang === "ar"
-      ? `هذه إجاباتي على الاختبار:\n\n${ansText}\n\nصحّح الإجابات وقيّمني.`
-      : `Here are my test answers:\n\n${ansText}\n\nPlease evaluate my answers.`;
+  function requestTest() {
+    // Simply send the "ready" message through the regular tutor channel
+    const msg = lang === "ar" ? "جاهز للاختبار — ابدأ الأسئلة." : "I am ready to be tested. Please give me the questions.";
     const ut: Turn = { role: "user", content: msg };
     const nt = [...turns, ut];
-    setTurns(nt); setPhase("lesson"); setTestQs([]);
-    await callTutor(msg, nt);
+    setTurns(nt);
+    callTutor(msg, nt);
   }
+
+  // submitTestAnswers removed — answers sent via regular text input
 
   function saveLesson() {
     const content = turns.filter(x => x.role === "assistant").map(x => x.content).join("\n\n---\n\n");
@@ -233,7 +206,7 @@ export default function LearnPage() {
 
   function restart() {
     setPhase("topic"); setTopic(""); setDStep(0); setDAnswers({});
-    setTurns([]); setInput(""); setError(""); setTestQs([]); setTestAns({});
+    setTurns([]); setInput(""); setError("");
   }
 
   const curQ = questions[dStep];
@@ -346,15 +319,10 @@ export default function LearnPage() {
           {/* Action bar */}
           {!loading && lastAssistant && phase !== "done" && (
             <div className={`px-4 pb-2 flex gap-2 flex-wrap ${isRTL ? "flex-row-reverse" : ""}`}>
-              {isLesson && !testLoading && (
+              {isLesson && (
                 <button onClick={requestTest}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e0a955] text-black text-sm font-semibold">
                   <CheckCircle2 size={14} /> {t.readyBtn}
-                </button>
-              )}
-              {testLoading && (
-                <button disabled className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#e0a955]/60 text-black text-sm">
-                  <Loader2 size={14} className="animate-spin" /> {t.loadingTest}
                 </button>
               )}
               {isEval && (
@@ -392,35 +360,7 @@ export default function LearnPage() {
         </>
       )}
 
-      {/* TEST — radio buttons for multiple choice */}
-      {phase === "test" && (
-        <div className="flex-1 overflow-y-auto px-4 py-4">
-          <div className="max-w-2xl mx-auto space-y-5">
-            {testQs.map((q, qi) => (
-              <div key={qi} className="rounded-xl bg-[#0a1830] border border-[#1a3f7c]/40 p-5">
-                <p className="text-slate-100 font-medium mb-3" dir="auto">
-                  {lang === "ar" ? `س${qi + 1}: ` : `Q${qi + 1}: `}{q.q}
-                </p>
-                <div className="grid gap-2">
-                  {q.options.map((opt, oi) => (
-                    <RadioOpt key={oi} label={opt} selected={testAns[qi] === opt}
-                      onClick={() => setTestAns(a => ({ ...a, [qi]: opt }))} />
-                  ))}
-                </div>
-              </div>
-            ))}
 
-            {error && <p className="text-xs text-red-400">{error}</p>}
-
-            <button onClick={submitTestAnswers}
-              disabled={Object.keys(testAns).length < testQs.length}
-              className="w-full py-3 rounded-lg bg-[#e0a955] text-black font-semibold disabled:opacity-40 flex items-center justify-center gap-2">
-              <CheckCircle2 size={16} /> {t.submitBtn}
-            </button>
-          </div>
-          <div ref={bottomRef} />
-        </div>
-      )}
     </div>
   );
 }

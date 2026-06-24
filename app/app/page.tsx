@@ -9,7 +9,7 @@ import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
   Shield, ChevronDown, Bot, User, AlertCircle, Loader2,
   Menu, X, LogOut, Users, Zap, Paperclip, Mic, MicOff,
-  FileText, Image, StopCircle, Download, Copy, RotateCcw, Newspaper, Trophy, Brain
+  FileText, Image, StopCircle, Download, Copy, RotateCcw, Newspaper, Trophy, Brain, GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 
@@ -474,6 +474,7 @@ export default function ChatPage() {
             { href: "/cybernews", icon: Newspaper, label: "Cyber News", adminOnly: false },
             { href: "/worldcup", icon: Trophy, label: "World Cup", adminOnly: false },
             { href: "/personality", icon: Brain, label: "Personality", adminOnly: false },
+            { href: "/learn", icon: GraduationCap, label: "علمني", adminOnly: false },
             { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
             { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
           ].filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner")
@@ -530,7 +531,7 @@ export default function ChatPage() {
               </div>
               <div className="text-center">
                 <h2 className="text-lg font-semibold text-slate-200">FeTo Enterprise AI</h2>
-                <p className="text-sm text-slate-500 mt-1">13 agents · CBE framework · File & voice support</p>
+                <p className="text-sm text-slate-500 mt-1">20 agents · 100+ commands · CBE framework · File & voice support</p>
               </div>
               <div className="grid grid-cols-2 gap-2 w-full max-w-md">
                 {["What is Zero Trust Architecture?", "Explain CBE cybersecurity framework", "Ransomware response playbook", "T24 core banking best practices"].map((q) => (

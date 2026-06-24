@@ -105,6 +105,7 @@ export default function LearnPage() {
   const [dStep, setDStep]         = useState(0);
   const [dAnswers, setDAnswers]   = useState<Record<string, string>>({});
   const [turns, setTurns]         = useState<Turn[]>([]);
+  const [pendingMsg, setPendingMsg] = useState<string>("");  // initial tutor message to send
   const [input, setInput]         = useState("");
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState("");
@@ -120,6 +121,15 @@ export default function LearnPage() {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [turns, loading, dStep, testQs]);
 
+  // Fire the initial tutor call only after phase=lesson is committed to DOM.
+  useEffect(() => {
+    if (phase === "lesson" && pendingMsg && turns.length === 1 && !loading) {
+      const ut = turns[0];
+      setPendingMsg("");
+      callTutor(pendingMsg, [ut]);
+    }
+  }, [phase, pendingMsg]);  // eslint-disable-line
+
   const lastAssistant = [...turns].reverse().find(x => x.role === "assistant")?.content ?? "";
   const isLesson = /خد وقتك|ولما تكون جاهز|when you('| a)re ready|say\s*ready/i.test(lastAssistant);
   const isEval   = /score:|الدرجة:|تقييم|الدرس الجاي|next step|next lesson/i.test(lastAssistant);
@@ -133,13 +143,21 @@ export default function LearnPage() {
         body: JSON.stringify({ message, lang }),
       });
       const data = await res.json();
-      const reply = data.reply || data.response || data.error || "No response";
+      if (!data.reply && !data.response) {
+        // Backend returned an error — show retry, don't put error string in chat
+        setError(lang === "ar" ? "حصل خطأ في الاتصال — اضغط على زرار للمحاولة مرة أخرى." : "Connection error — please try again.");
+        return;
+      }
+      const reply = data.reply || data.response;
       setTurns([...history, { role: "assistant", content: reply }]);
     } catch { setError("Network error — please try again."); }
     finally { setLoading(false); }
   }
 
   async function requestTest() {
+    // Guard: never request test with empty history
+    const assistantTurns = turns.filter(x => x.role === "assistant");
+    if (!assistantTurns.length) { setError(lang === "ar" ? "لازم تنتهي من الدرس الأول الأول." : "Please complete the first lesson first."); return; }
     setTestLoading(true); setError("");
     try {
       const res = await fetch("/api/proxy/learn-test", {
@@ -198,8 +216,9 @@ export default function LearnPage() {
       ? `علمني "${topic}" خطوة بخطوة وامتحني.\n\nإجاباتي على الاكتشاف:\n${lines}\n\nالرجاء الرد باللغة العربية.`
       : `Teach me "${topic}" step by step and test me.\n\nMy discovery answers:\n${lines}\n\nPlease respond in English.`;
     const ut: Turn = { role: "user", content: msg };
-    setTurns([ut]); setPhase("lesson");
-    callTutor(msg, [ut]);
+    setPendingMsg(msg);
+    setTurns([ut]);
+    setPhase("lesson");  // useEffect will fire callTutor after commit
   }
 
   async function sendMsg() {

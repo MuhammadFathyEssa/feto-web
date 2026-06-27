@@ -4,6 +4,7 @@ const BACKEND_URL = process.env.BACKEND_URL || "";
 const API_KEY = process.env.BACKEND_API_KEY || "";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 // Proxies the personality assessment interview to the backend.
 export async function POST(request: Request) {

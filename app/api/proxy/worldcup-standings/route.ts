@@ -4,6 +4,7 @@ const BACKEND_URL = process.env.BACKEND_URL || "";
 const API_KEY = process.env.BACKEND_API_KEY || "";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 // Public World Cup group standings (football-data.org via backend).
 export async function GET() {

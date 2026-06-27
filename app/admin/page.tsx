@@ -144,8 +144,13 @@ export default function AdminPage() {
           <span style={{width:22,height:22,borderRadius:"50%",border:"1px solid rgba(224,169,85,.45)",display:"inline-flex",alignItems:"center",justifyContent:"center",flex:"0 0 auto"}}><span style={{width:5,height:5,borderRadius:"50%",background:"#e0a955",boxShadow:"0 0 8px 2px rgba(224,169,85,.55)"}} /></span>
           <span className="font-semibold text-sm" style={{fontFamily:"'Playfair Display',Georgia,serif"}}>Admin Portal</span>
         </div>
-        <div className="ml-auto flex items-center gap-1.5 text-xs text-[#e0a955]">
-          <Lock size={11} /> Owner / Admin only
+        <div className="ml-auto flex items-center gap-3 text-xs">
+          <Link href="/observability" className="flex items-center gap-1.5 text-slate-300 hover:text-[#e0a955] transition-colors">
+            <Activity size={13} /> Observability
+          </Link>
+          <span className="flex items-center gap-1.5 text-[#e0a955]">
+            <Lock size={11} /> Owner / Admin only
+          </span>
         </div>
       </header>
 

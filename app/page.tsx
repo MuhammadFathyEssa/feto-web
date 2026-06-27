@@ -111,9 +111,9 @@ export default function LandingPage() {
       </nav>
 
       <header className="hero" id="top">
-        <div className="hero-bg" />
-        <canvas id="constellation" />
-        <div className="hero-vignette" />
+        <div className="hero-bg" aria-hidden="true" />
+        <canvas id="constellation" aria-hidden="true" />
+        <div className="hero-vignette" aria-hidden="true" />
         <div className="hero-content">
           <div className="wrap">
             <div className="hero-grid">
@@ -161,7 +161,7 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="sec-head reveal"><span className="eyebrow">The platform</span><h2>Not a chatbot. A reasoning institution.</h2><p>Most AI tools answer questions. FeTo convenes a council — specialized agents that debate, verify, and converge on decisions your leadership can act on. Each carries deep domain context; together they think like a seasoned executive team.</p></div>
           <div className="grid-3 stagger">
-            <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3" /></svg></div><h3>Thirteen minds, one mandate</h3><p>Strategy, security, data, finance, content — each a specialist, orchestrated through a council layer that synthesizes a single decisive recommendation.</p></div>
+            <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3" /></svg></div><h3>Twenty minds, one mandate</h3><p>Strategy, security, data, finance, content — each a specialist, orchestrated through a council layer that synthesizes a single decisive recommendation.</p></div>
             <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 12h4l2-7 4 14 2-7h6" /></svg></div><h3>Arabic at the core</h3><p>Not translated, native. FeTo reasons, writes, and presents in fluent executive Arabic and English — built for the boardrooms of Cairo, Riyadh, and the Gulf.</p></div>
             <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" /><path d="M9 12l2 2 4-4" /></svg></div><h3>Banking-grade by design</h3><p>Hardened across every build, mapped to the CBE Financial Cybersecurity Framework, audited to a 96/100 CTO assessment — security is the foundation, not a feature.</p></div>
           </div>
@@ -184,7 +184,7 @@ export default function LandingPage() {
                 <div className="li"><span className="tick"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M2 6l2.5 2.5L10 3" /></svg></span><span>Available where executives already work — web, mobile, Telegram, and WhatsApp.</span></div>
               </div>
             </div>
-            <div className="split-visual reveal"><canvas className="orbit-canvas" id="orbit" /><div className="orbit-label">20 agents · one council</div></div>
+            <div className="split-visual reveal"><canvas className="orbit-canvas" id="orbit" aria-hidden="true" /><div className="orbit-label">20 agents · one council</div></div>
           </div>
         </div>
       </section>
@@ -285,8 +285,8 @@ export default function LandingPage() {
       </section>
 
       <section className="cta-final">
-        <div className="cta-bg" />
-        <canvas id="cta-constellation" />
+        <div className="cta-bg" aria-hidden="true" />
+        <canvas id="cta-constellation" aria-hidden="true" />
         <div className="wrap">
           <div className="cta-inner reveal">
             <h2>Intelligence worthy of<br />the <em>decisions you make.</em></h2>
@@ -304,7 +304,7 @@ export default function LandingPage() {
           <div className="foot-grid">
             <div className="foot-brand"><a className="logo" href="#top"><span className="logo-mark"><span className="logo-dot" /></span><span className="logo-txt">FeTo</span></a><p>An Arabic-native executive intelligence platform, built for the institutions that lead the region.</p></div>
             <div className="foot-col"><h4>Platform</h4><a href="#platform">Overview</a><a href="#council">The council</a><a href="#security">Security</a><a href="#vision">Vision</a></div>
-            <div className="foot-col"><h4>Company</h4><a href="#">About</a><a href="#">Leadership</a><a href="#">Contact</a></div>
+            <div className="foot-col"><h4>Company</h4><a href="https://muhammadfathy.com" target="_blank" rel="noopener noreferrer">About the founder</a><a href="mailto:Eng.mfathy@gmail.com">Contact</a></div>
             <div className="foot-col"><h4>Access</h4><Link href="/login">Sign in</Link><Link href="/request-access">Request access</Link></div>
           </div>
           <div className="foot-bottom"><p>© 2026 FeTo Executive Intelligence Platform. All rights reserved.</p><p className="foot-rtl">منصّة ذكاء تنفيذي عربية · مبنية بمعايير بنكية</p></div>

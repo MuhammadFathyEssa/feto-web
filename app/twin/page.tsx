@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Brain, Sparkles, Compass, Loader2, AlertTriangle, Lock } from "lucide-react";
+import { ArrowLeft, Brain, Sparkles, Compass, Loader2, AlertTriangle, Lock, PlusCircle, CheckCircle2 } from "lucide-react";
 
 // Detect Arabic to set direction per result block.
 function dirOf(text: string): "rtl" | "ltr" {
   return /[\u0600-\u06FF]/.test(text) ? "rtl" : "ltr";
 }
 
-type Tab = "simulate" | "patterns";
+type Tab = "simulate" | "patterns" | "record";
 
 export default function TwinPage() {
   const [tab, setTab] = useState<Tab>("simulate");
@@ -24,6 +24,30 @@ export default function TwinPage() {
   const [patOut, setPatOut] = useState("");
   const [patNote, setPatNote] = useState("");
   const [patLoading, setPatLoading] = useState(false);
+
+  // record
+  const [decisionText, setDecisionText] = useState("");
+  const [recNote, setRecNote] = useState("");
+  const [recOk, setRecOk] = useState(false);
+  const [recLoading, setRecLoading] = useState(false);
+
+  async function runRecord() {
+    if (!decisionText.trim() || recLoading) return;
+    setRecLoading(true); setRecNote(""); setRecOk(false);
+    try {
+      const r = await fetch("/api/proxy/twin-decide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: decisionText.trim() }),
+      });
+      const d = await r.json();
+      if (r.status === 403) { setRecNote("Admin access required."); return; }
+      if (d.success) { setRecOk(true); setRecNote(`✅ القرار اتسجل في الذاكرة (#${d.id})`); setDecisionText(""); }
+      else setRecNote(d.error || "Failed to record decision.");
+    } catch {
+      setRecNote("Network error — try again.");
+    } finally { setRecLoading(false); }
+  }
 
   async function runSimulate() {
     if (!scenario.trim() || simLoading) return;
@@ -69,7 +93,7 @@ export default function TwinPage() {
         </div>
         <p className="mb-5 text-sm text-slate-500">
           Predicts your likely decision from your recorded decisions, and surfaces your decision patterns.
-          Quality scales with how many decisions you record (via <code className="text-slate-400">/decide</code> on Telegram).
+          Quality scales with how many decisions you record — here, or via <code className="text-slate-400">/decide</code> on Telegram/WhatsApp.
         </p>
 
         {/* Tabs */}
@@ -85,6 +109,12 @@ export default function TwinPage() {
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 transition ${tab === "patterns" ? "bg-[#e0a955] text-[#071428] font-medium" : "text-slate-400 hover:text-slate-200"}`}
           >
             <Compass size={14} /> Decision patterns
+          </button>
+          <button
+            onClick={() => setTab("record")}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 transition ${tab === "record" ? "bg-[#e0a955] text-[#071428] font-medium" : "text-slate-400 hover:text-slate-200"}`}
+          >
+            <PlusCircle size={14} /> Record a decision
           </button>
         </div>
 
@@ -140,6 +170,33 @@ export default function TwinPage() {
                 {patOut}
               </div>
             )}
+          </div>
+        )}
+        {tab === "record" && (
+          <div>
+            <textarea
+              value={decisionText}
+              onChange={(e) => setDecisionText(e.target.value)}
+              placeholder="اكتب القرار + السبب… مثال: اعتمدنا Nutanix بدل VMware — التكلفة أقل والدعم المحلي أقوى"
+              rows={4}
+              className="w-full resize-y rounded-xl border border-[#1a2235] bg-[#0a1830] p-3 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-[#e0a955]/50"
+            />
+            <button
+              onClick={runRecord}
+              disabled={recLoading || !decisionText.trim()}
+              className="mt-3 flex items-center gap-2 rounded-lg bg-[#e0a955] px-4 py-2 text-sm font-medium text-[#071428] disabled:opacity-50"
+            >
+              {recLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlusCircle className="h-4 w-4" />}
+              Record decision
+            </button>
+            {recNote && (
+              <div className={`mt-4 flex items-center gap-2 rounded-lg border px-4 py-3 ${recOk ? "border-emerald-900/40 bg-emerald-950/30 text-emerald-300" : "border-amber-900/40 bg-amber-950/30 text-amber-300"}`}>
+                {recOk ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />} {recNote}
+              </div>
+            )}
+            <p className="mt-3 text-xs text-slate-600">
+              The more decisions you record, the sharper the simulation and pattern analysis become.
+            </p>
           </div>
         )}
       </div>

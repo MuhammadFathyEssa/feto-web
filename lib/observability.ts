@@ -22,6 +22,8 @@ export interface ObservabilityMetrics {
   totalMessages: number;
   totalTokens: number;
   monthlyTokenCap: number;
+  projectedMonthlyTokens: number;
+  onPaceToExceed: boolean;
   avgLatencyMs: number;
   byAgent: AgentStat[];
   byEngine: EngineStat[];
@@ -66,6 +68,12 @@ export async function getObservabilityMetrics(windowHours = 24): Promise<Observa
 
   const totalMessages = rows.length;
   const totalTokens = rows.reduce((s, r) => s + (r.tokens_used || 0), 0);
+
+  // Extrapolate this window's token rate to a 30-day month (FAST_MODE=0 cost watch).
+  const projectedMonthlyTokens = windowHours > 0
+    ? Math.round((totalTokens / windowHours) * 24 * 30)
+    : 0;
+  const onPaceToExceed = MONTHLY_TOKEN_CAP > 0 && projectedMonthlyTokens > MONTHLY_TOKEN_CAP;
   const latencies = rows.map((r) => r.latency_ms || 0).filter((n) => n > 0);
   const avgLatencyMs = latencies.length ? round(latencies.reduce((a, b) => a + b, 0) / latencies.length) : 0;
 
@@ -111,6 +119,8 @@ export async function getObservabilityMetrics(windowHours = 24): Promise<Observa
     totalMessages,
     totalTokens,
     monthlyTokenCap: MONTHLY_TOKEN_CAP,
+    projectedMonthlyTokens,
+    onPaceToExceed,
     avgLatencyMs,
     byAgent,
     byEngine,

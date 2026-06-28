@@ -12,6 +12,8 @@ interface Metrics {
   totalMessages: number;
   totalTokens: number;
   monthlyTokenCap: number;
+  projectedMonthlyTokens: number;
+  onPaceToExceed: boolean;
   avgLatencyMs: number;
   byAgent: AgentStat[];
   byEngine: EngineStat[];
@@ -135,6 +137,16 @@ export default function ObservabilityPage() {
                   className={`h-full rounded-full ${tokenPct > 80 ? "bg-red-500" : tokenPct > 50 ? "bg-amber-500" : "bg-[#e0a955]"}`}
                   style={{ width: `${tokenPct}%` }}
                 />
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs">
+                <span className="text-slate-500">
+                  projected ~{metrics.projectedMonthlyTokens.toLocaleString()} tokens/mo at this rate
+                </span>
+                {metrics.onPaceToExceed && (
+                  <span className="flex items-center gap-1 text-red-400">
+                    <AlertTriangle className="h-3.5 w-3.5" /> on pace to exceed cap
+                  </span>
+                )}
               </div>
             </Panel>
 

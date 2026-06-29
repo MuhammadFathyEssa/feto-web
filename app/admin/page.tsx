@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Users, Activity, Lock, Plus, Loader2, CheckCircle, X, Trash2, Pencil, KeyRound, Brain, Network } from "lucide-react";
+import { ArrowLeft, Users, Activity, Lock, Plus, Loader2, CheckCircle, X, Trash2, Pencil, KeyRound, Brain, Network, GitBranch } from "lucide-react";
 
 interface User { id: string; email: string; name: string; role: string; last_login?: string; last_active?: string; created_at?: string; }
 interface AccessRequest { id: string; name: string; email: string; organization?: string; reason?: string; created_at?: string; }
@@ -150,6 +150,9 @@ export default function AdminPage() {
           </Link>
           <Link href="/decisions" className="flex items-center gap-1.5 text-slate-300 hover:text-[#e0a955] transition-colors">
             <Network size={13} /> Decision Graph
+          </Link>
+          <Link href="/planner" className="flex items-center gap-1.5 text-slate-300 hover:text-[#e0a955] transition-colors">
+            <GitBranch size={13} /> Planner
           </Link>
           <Link href="/observability" className="flex items-center gap-1.5 text-slate-300 hover:text-[#e0a955] transition-colors">
             <Activity size={13} /> Observability

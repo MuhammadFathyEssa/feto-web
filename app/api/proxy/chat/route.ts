@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   }
   if (!API_KEY || !BACKEND_URL) return NextResponse.json({ success: false, error: "Service misconfigured" }, { status: 503 });
 
-  let body: { message?: string };
+  let body: { message?: string; agentType?: string };
   try {
     body = await req.json();
   } catch {
@@ -27,13 +27,15 @@ export async function POST(req: NextRequest) {
   if (message.length > 4000) {
     return NextResponse.json({ success: false, error: "Message too long (max 4000)" }, { status: 400 });
   }
+  // Optional: pin the request to a specific agent (used by dedicated skill pages).
+  const agentType = body.agentType ? String(body.agentType).slice(0, 40) : undefined;
 
   try {
     const res = await fetch(`${BACKEND_URL}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
       // userId derived from the authenticated session — NOT from the client
-      body: JSON.stringify({ userId: session.id, message, userName: session.name }),
+      body: JSON.stringify({ userId: session.id, message, userName: session.name, ...(agentType ? { agentType } : {}) }),
     });
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });

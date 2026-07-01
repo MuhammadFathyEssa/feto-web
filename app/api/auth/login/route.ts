@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
     "unknown";
   const key = `login:${ip}`;
 
-  // Check WITHOUT consuming an attempt — we only penalize failed logins below.
-  // 10 attempts / 10 minutes: enough for fat-finger retries, still blocks brute force.
-  const rl = peekRateLimit(key, 10, 10 * 60 * 1000);
+  // IP-keyed check WITHOUT consuming — only failed logins are penalized below.
+  // 10 attempts / 10 minutes: fat-finger tolerance, still blocks single-IP brute force.
+  const rl = await peekRateLimit(key, 10, 10 * 60 * 1000);
   if (!rl.ok) {
     return NextResponse.json(
       { success: false, error: `Too many attempts. Try again in ${Math.ceil(rl.retryAfterSec / 60)} min.` },
@@ -30,16 +30,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Email and password required" }, { status: 400 });
     }
 
-    const user = await getUserByEmail(email.toLowerCase().trim());
+    const normEmail = email.toLowerCase().trim();
+    // Per-account lockout, IP-independent: defends the distributed case where an
+    // attacker rotates source IPs against one account. Tighter budget than the IP key.
+    const emailKey = `login:email:${normEmail}`;
+    const erl = await peekRateLimit(emailKey, 20, 30 * 60 * 1000);
+    if (!erl.ok) {
+      return NextResponse.json(
+        { success: false, error: `Too many attempts on this account. Try again in ${Math.ceil(erl.retryAfterSec / 60)} min.` },
+        { status: 429, headers: { "Retry-After": String(erl.retryAfterSec) } }
+      );
+    }
+
+    const user = await getUserByEmail(normEmail);
 
     if (!user) {
-      recordFailedAttempt(key, 10, 10 * 60 * 1000);
+      await recordFailedAttempt(key, 10, 10 * 60 * 1000);
+      await recordFailedAttempt(emailKey, 20, 30 * 60 * 1000);
       return NextResponse.json({ success: false, error: "Invalid email or password" }, { status: 401 });
     }
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
-      recordFailedAttempt(key, 10, 10 * 60 * 1000);
+      await recordFailedAttempt(key, 10, 10 * 60 * 1000);
+      await recordFailedAttempt(emailKey, 20, 30 * 60 * 1000);
       return NextResponse.json({ success: false, error: "Invalid email or password" }, { status: 401 });
     }
 
@@ -52,7 +66,8 @@ export async function POST(req: NextRequest) {
 
     const token = await signToken(sessionUser);
     await updateLastLogin(user.id);
-    resetRateLimit(key); // clear on success
+    await resetRateLimit(key); // clear on success
+    await resetRateLimit(emailKey);
 
     const res = NextResponse.json({ success: true, user: sessionUser });
     res.cookies.set(COOKIE_NAME, token, {

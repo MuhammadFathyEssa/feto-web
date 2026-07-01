@@ -6,7 +6,7 @@ import { peekRateLimit, recordFailedAttempt } from "@/lib/rateLimit";
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
   const key = `accessreq:${ip}`;
-  const rl = peekRateLimit(key, 5, 30 * 60 * 1000); // 5 / 30 min
+  const rl = await peekRateLimit(key, 5, 30 * 60 * 1000); // 5 / 30 min
   if (!rl.ok) {
     return NextResponse.json({ success: false, error: `Too many requests. Try again later.` }, { status: 429 });
   }
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(email))) {
       return NextResponse.json({ success: false, error: "Enter a valid email" }, { status: 400 });
     }
-    recordFailedAttempt(key, 5, 30 * 60 * 1000);
+    await recordFailedAttempt(key, 5, 30 * 60 * 1000);
 
     const normalized = String(email).toLowerCase().trim();
 

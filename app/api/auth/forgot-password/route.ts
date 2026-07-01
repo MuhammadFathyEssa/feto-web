@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
   const key = `forgot:${ip}`;
   // 5 requests / 15 min per IP
-  const rl = peekRateLimit(key, 5, 15 * 60 * 1000);
+  const rl = await peekRateLimit(key, 5, 15 * 60 * 1000);
   if (!rl.ok) {
     return NextResponse.json(
       { success: false, error: `Too many requests. Try again in ${Math.ceil(rl.retryAfterSec / 60)} min.` },
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     if (!email) {
       return NextResponse.json({ success: false, error: "Email required" }, { status: 400 });
     }
-    recordFailedAttempt(key, 5, 15 * 60 * 1000);
+    await recordFailedAttempt(key, 5, 15 * 60 * 1000);
 
     const normalized = String(email).toLowerCase().trim();
     const user = await getUserByEmail(normalized);

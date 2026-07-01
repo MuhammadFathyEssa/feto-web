@@ -1,73 +1,68 @@
-// Lightweight in-memory sliding-window rate limiter.
-// Suitable for single-instance / serverless warm starts. For multi-region
-// horizontal scale, swap the Map for Upstash Redis (same interface).
+// Distributed sliding-window rate limiter backed by Supabase (login_rate table +
+// peek_login / record_login_failure / reset_login RPCs). Shared across serverless
+// instances and cold starts — the prior in-memory Map reset per instance, letting a
+// distributed brute force bypass the limit. Consume-on-failure semantics: a successful
+// login does not count against the window (peek reads, recordFailedAttempt increments,
+// resetRateLimit clears on success).
 
-interface Bucket {
-  hits: number[];
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
+
+const WINDOW_MS = 15 * 60 * 1000;
+const MAX_HITS = 5;
+
+function winArg(windowMs: number): string {
+  return `${Math.ceil(windowMs / 60000)} minutes`;
 }
 
-const buckets = new Map<string, Bucket>();
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-const MAX_HITS = 5; // attempts per window
-
-// Periodic cleanup to bound memory
-let lastSweep = Date.now();
-function sweep(now: number) {
-  if (now - lastSweep < WINDOW_MS) return;
-  lastSweep = now;
-  for (const [key, b] of buckets) {
-    b.hits = b.hits.filter((t) => now - t < WINDOW_MS);
-    if (b.hits.length === 0) buckets.delete(key);
-  }
+async function rpc(fn: string, args: Record<string, unknown>): Promise<unknown> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    },
+    body: JSON.stringify(args),
+  });
+  if (!res.ok) throw new Error(`rate-limit rpc ${fn} failed: ${res.status}`);
+  return res.json();
 }
 
-export function checkRateLimit(
+// Read the current count without consuming a slot.
+export async function peekRateLimit(
   key: string,
   max = MAX_HITS,
-  windowMs = WINDOW_MS
-): { ok: boolean; retryAfterSec: number } {
-  const now = Date.now();
-  sweep(now);
-  const b = buckets.get(key) || { hits: [] };
-  b.hits = b.hits.filter((t) => now - t < windowMs);
-  if (b.hits.length >= max) {
-    const oldest = b.hits[0];
-    const retryAfterSec = Math.ceil((windowMs - (now - oldest)) / 1000);
-    buckets.set(key, b);
-    return { ok: false, retryAfterSec };
+  windowMs = WINDOW_MS,
+): Promise<{ ok: boolean; retryAfterSec: number }> {
+  try {
+    const count = (await rpc("peek_login", { k: key, win: winArg(windowMs) })) as number;
+    if (count >= max) return { ok: false, retryAfterSec: Math.ceil(windowMs / 1000) };
+    return { ok: true, retryAfterSec: 0 };
+  } catch {
+    // Fail open on limiter outage rather than locking out all logins.
+    return { ok: true, retryAfterSec: 0 };
   }
-  b.hits.push(now);
-  buckets.set(key, b);
-  return { ok: true, retryAfterSec: 0 };
 }
 
-// Check the limit WITHOUT consuming an attempt (read-only).
-export function peekRateLimit(
+// Consume one slot (call on a failed attempt).
+export async function recordFailedAttempt(
   key: string,
-  max = MAX_HITS,
-  windowMs = WINDOW_MS
-): { ok: boolean; retryAfterSec: number } {
-  const now = Date.now();
-  sweep(now);
-  const b = buckets.get(key);
-  if (!b) return { ok: true, retryAfterSec: 0 };
-  const hits = b.hits.filter((t) => now - t < windowMs);
-  if (hits.length >= max) {
-    const retryAfterSec = Math.ceil((windowMs - (now - hits[0])) / 1000);
-    return { ok: false, retryAfterSec };
+  _max = MAX_HITS,
+  windowMs = WINDOW_MS,
+): Promise<void> {
+  try {
+    await rpc("record_login_failure", { k: key, win: winArg(windowMs) });
+  } catch {
+    // Non-fatal: a missed increment must not break the auth path.
   }
-  return { ok: true, retryAfterSec: 0 };
 }
 
-// Record a single failed attempt (consume one slot).
-export function recordFailedAttempt(key: string, max = MAX_HITS, windowMs = WINDOW_MS): void {
-  const now = Date.now();
-  const b = buckets.get(key) || { hits: [] };
-  b.hits = b.hits.filter((t) => now - t < windowMs);
-  b.hits.push(now);
-  buckets.set(key, b);
-}
-
-export function resetRateLimit(key: string) {
-  buckets.delete(key);
+// Clear the window (call on a successful attempt).
+export async function resetRateLimit(key: string): Promise<void> {
+  try {
+    await rpc("reset_login", { k: key });
+  } catch {
+    // Non-fatal.
+  }
 }

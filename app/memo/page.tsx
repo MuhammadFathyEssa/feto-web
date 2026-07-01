@@ -20,13 +20,13 @@ type Fields = {
 const EMPTY: Fields = { subject: "", decision: "", background: "", financials: "", risks: "", benefits: "", issuer: "" };
 
 const FIELD_META: { key: keyof Fields; label: string; placeholder: string; rows: number; required: boolean }[] = [
-  { key: "subject",     label: "الموضوع", placeholder: "تجديد دعم وصيانة شبكة Cisco وإحلال أجهزة ATM Routers", rows: 2, required: true },
+  { key: "subject",     label: "الموضوع", placeholder: "تجديد دعم وصيانة البنية التحتية للشبكة وإحلال الأجهزة المنتهية الدعم", rows: 2, required: true },
   { key: "decision",    label: "القرار المطلوب / البنود", placeholder: "اعتماد العرض النهائي، اعتماد القيمة، اعتماد خطة الإحلال، إرجاء المناقصة القائمة…", rows: 3, required: true },
-  { key: "background",  label: "الخلفية والوضع الحالي", placeholder: "١٩٢٨ جهاز Router، منها ١١٧٨ خارج الدعم الفني (EoS/EoL)، بيئة ATM حرجة…", rows: 4, required: true },
-  { key: "financials",  label: "الأرقام المالية", placeholder: "الإجمالي ٢,٩٥٠,٠٠٠ دولار شامل الضريبة: ١,٠٩٥,٠٠٠ دعم وصيانة / ١,١٥٥,٠٠٠ توريد ١١٠٠ جهاز / ٧٠٠,٠٠٠ تراخيص SD-WAN…", rows: 3, required: true },
+  { key: "background",  label: "الخلفية والوضع الحالي", placeholder: "عدد كبير من الأجهزة خارج الدعم الفني (EoS/EoL)، بيئة تشغيل حرجة معرّضة للمخاطر…", rows: 4, required: true },
+  { key: "financials",  label: "الأرقام المالية", placeholder: "الإجمالي شامل ضريبة القيمة المضافة، موزّعًا على البنود: دعم وصيانة / توريد أجهزة / تراخيص برمجية…", rows: 3, required: true },
   { key: "risks",       label: "المخاطر", placeholder: "تشغيلية: انقطاع الخدمة، تعذر التصعيد للمصنّع. أمنية: توقف التحديثات. تقنية: عدم مواكبة SD-WAN…", rows: 3, required: false },
   { key: "benefits",    label: "العوائد والفوائد على البنك", placeholder: "تقنية: توحيد المنصة. توسعية: جاهزية النمو. أمنية: خفض المخاطر. مالية: وفر تفاوضي مقابل العروض الابتدائية…", rows: 3, required: false },
-  { key: "issuer",      label: "الجهة المُصدِرة", placeholder: "قطاع التكنولوجيا والخدمات التشغيلية لتكنولوجيا المعلومات — بنك القاهرة", rows: 1, required: false },
+  { key: "issuer",      label: "الجهة المُصدِرة", placeholder: "قطاع تكنولوجيا المعلومات والخدمات التشغيلية", rows: 1, required: false },
 ];
 
 export default function MemoPage() {

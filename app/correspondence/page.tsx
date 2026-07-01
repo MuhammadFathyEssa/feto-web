@@ -10,7 +10,7 @@ import {
 const dir = (s: string) => (/[\u0600-\u06FF]/.test(s) ? "rtl" : "ltr");
 
 const EXAMPLES = [
-  "Draft an email to a vendor escalating a 3-week delivery delay on the T24 migration, firm but professional.",
+  "Draft an email to a vendor escalating a 3-week delivery delay on a system migration, firm but professional.",
   "اكتب إيميل رسمي بالإنجليزي للمجلس عن نتائج الربع الثالث مع طلب اجتماع للمناقشة.",
   "Rewrite this to sound more executive: 'hey, just checking if you got my last email about the budget thing?'",
   "Reply declining a meeting invitation politely while proposing an alternative time next week.",

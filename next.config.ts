@@ -29,9 +29,11 @@ const securityHeaders = [
       "font-src 'self' data:",
       "connect-src 'self'",
       "media-src 'self' blob:",
+      "object-src 'none'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      "upgrade-insecure-requests",
     ].join("; "),
   },
 ];

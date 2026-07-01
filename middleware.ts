@@ -19,7 +19,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
   // Allow public paths (prefix match)
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+  // CWE-285: match exact path or a true sub-path (prefix + "/"), never a bare prefix.
+  // "/login" must not match "/login-backdoor"; only "/login" or "/login/...".
+  if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
     return NextResponse.next();
   }
 

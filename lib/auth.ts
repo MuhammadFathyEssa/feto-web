@@ -45,7 +45,7 @@ export async function signToken(user: SessionUser): Promise<string> {
 
 export async function verifyToken(token: string): Promise<SessionUser | null> {
   try {
-    const { payload } = await jwtVerify(token, getJwtSecret());
+    const { payload } = await jwtVerify(token, getJwtSecret(), { algorithms: ["HS256"] });
     const user = payload as unknown as SessionUser;
     // Enforce idle timeout — reject if inactive too long
     if (user.lastActivity && Date.now() - user.lastActivity > IDLE_TIMEOUT_MS) {

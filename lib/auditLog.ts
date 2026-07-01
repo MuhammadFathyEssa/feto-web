@@ -24,6 +24,14 @@ export interface AuditEntry {
   ip_address?: string;
 }
 
+// OWASP A09: capture the client IP for the audit trail. Vercel/proxies set
+// x-forwarded-for (first hop is the client); fall back to x-real-ip.
+export function clientIp(req: Request): string | undefined {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip") ?? undefined;
+}
+
 export async function logAdminAction(entry: AuditEntry): Promise<void> {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     console.error("[AuditLog] CRITICAL: Supabase not configured — admin action NOT recorded:", entry.action);

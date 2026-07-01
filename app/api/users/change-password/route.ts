@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getSession, getUserById, updatePassword } from "@/lib/auth";
-import { logAdminAction } from "@/lib/auditLog";
+import { logAdminAction, clientIp } from "@/lib/auditLog";
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
       action: "user.password_reset",
       actor_id: session.id,
       actor_email: session.email,
+      ip_address: clientIp(req),
     });
 
     return NextResponse.json({ success: true, message: "Password updated successfully" });

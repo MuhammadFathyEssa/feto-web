@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getSession, createUser, getUserByEmail } from "@/lib/auth";
-import { logAdminAction } from "@/lib/auditLog";
+import { logAdminAction, clientIp } from "@/lib/auditLog";
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       target_id: newUser.id,
       target_email: newUser.email,
       metadata: { role: finalRole },
+      ip_address: clientIp(req),
     });
     return NextResponse.json({
       success: true,

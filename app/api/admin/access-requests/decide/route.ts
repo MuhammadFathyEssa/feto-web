@@ -6,7 +6,7 @@ import {
   getUserByEmail, createUser, createPasswordReset,
 } from "@/lib/auth";
 import { sendEmail, accessApprovedEmail, accessRejectedEmail } from "@/lib/email";
-import { logAdminAction } from "@/lib/auditLog";
+import { logAdminAction, clientIp } from "@/lib/auditLog";
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
         action: "access_request.reject",
         actor_id: session.id, actor_email: session.email,
         target_email: reqRow.email, metadata: {},
+        ip_address: clientIp(req),
       });
       return NextResponse.json({ success: true, decision: "rejected" });
     }
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
       action: "access_request.accept",
       actor_id: session.id, actor_email: session.email,
       target_email: reqRow.email, metadata: {},
+      ip_address: clientIp(req),
     });
     return NextResponse.json({ success: true, decision: "accepted" });
   } catch (e) {

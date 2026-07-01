@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getSession, getUserById, updateUserRole, updateUserPasswordHash } from "@/lib/auth";
-import { logAdminAction } from "@/lib/auditLog";
+import { logAdminAction, clientIp } from "@/lib/auditLog";
 
 export const dynamic = 'force-dynamic';
 
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       }
       const ok = await updateUserRole(String(userId), role);
       if (!ok) return NextResponse.json({ success: false, error: "Role update failed" }, { status: 500 });
-      await logAdminAction({ action: "user.role_change", actor_id: session.id, actor_email: session.email, target_id: target.id, target_email: target.email, metadata: { newRole: role } });
+      await logAdminAction({ action: "user.role_change", actor_id: session.id, actor_email: session.email, target_id: target.id, target_email: target.email, metadata: { newRole: role }, ip_address: clientIp(req) });
     }
 
     // Password reset
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       const hash = await bcrypt.hash(password, 12);
       const ok = await updateUserPasswordHash(String(userId), hash);
       if (!ok) return NextResponse.json({ success: false, error: "Password update failed" }, { status: 500 });
-      await logAdminAction({ action: "user.password_reset", actor_id: session.id, actor_email: session.email, target_id: target.id, target_email: target.email });
+      await logAdminAction({ action: "user.password_reset", actor_id: session.id, actor_email: session.email, target_id: target.id, target_email: target.email, ip_address: clientIp(req) });
     }
 
     return NextResponse.json({ success: true });

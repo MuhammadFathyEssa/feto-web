@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, getUserById, deleteUser } from "@/lib/auth";
-import { logAdminAction } from "@/lib/auditLog";
+import { logAdminAction, clientIp } from "@/lib/auditLog";
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
       actor_email: session.email,
       target_id: target.id,
       target_email: target.email,
+      ip_address: clientIp(req),
     });
     return NextResponse.json({ success: true });
   } catch {

@@ -10,6 +10,16 @@ export interface ChatResponse {
   error?: string;
 }
 
+// Canonical reply extractor. The backend emits the generated text under `response`
+// and `reply`; older branches used one or the other. Every page reads through this
+// so no read site can pick the wrong key. Returns "" when absent.
+export function extractReply(d: unknown): string {
+  if (!d || typeof d !== "object") return "";
+  const o = d as Record<string, unknown>;
+  const v = o.response ?? o.reply ?? o.content;
+  return typeof v === "string" ? v : "";
+}
+
 export interface Agent {
   id: string;
   name: string;

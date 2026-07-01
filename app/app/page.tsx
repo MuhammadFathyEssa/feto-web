@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { sendMessage, defaultAgents } from "@/lib/api";
+import { sendMessage, defaultAgents, extractReply } from "@/lib/api";
 import CommandPalette from "@/app/components/CommandPalette";
 import Onboarding from "@/app/components/Onboarding";
 import type { Message, Conversation } from "@/types";
@@ -364,7 +364,7 @@ export default function ChatPage() {
       }
 
       const d = data as { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string; downloadUrl?: string };
-      const fullContent = d.success ? (d.reply || d.response || "No response") : (d.error || "Request failed");
+      const fullContent = d.success ? (extractReply(d) || "No response") : (d.error || "Request failed");
       const assistantId = (Date.now() + 1).toString();
       const assistantMsg: Message = {
         id: assistantId,
@@ -406,7 +406,7 @@ export default function ChatPage() {
     try {
       const data = await sendMessage(text);
       const d = data as { success?: boolean; reply?: string; response?: string; error?: string; agent?: string; agentType?: string; downloadUrl?: string };
-      const fullContent = d.success ? (d.reply || d.response || "No response") : (d.error || "Request failed");
+      const fullContent = d.success ? (extractReply(d) || "No response") : (d.error || "Request failed");
       const assistantId = (Date.now() + 1).toString();
       addMessage({
         id: assistantId, role: "assistant", content: "",

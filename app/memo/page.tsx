@@ -7,6 +7,7 @@ import {
   ListChecks, ShieldAlert, TrendingUp, Workflow,
 } from "lucide-react";
 import { useAuthGuard } from "@/lib/useAuthGuard";
+import { extractReply } from "@/lib/api";
 
 type Fields = {
   subject: string;      // الموضوع
@@ -67,7 +68,7 @@ export default function MemoPage() {
       const d = await r.json();
       if (r.status === 401) { setNote("سجّل الدخول لتوليد المذكرة."); return; }
       if (d.success === false) { setNote(d.error || "تعذّر التوليد."); return; }
-      setOutput(d.response || d.reply || d.content || "لا يوجد رد.");
+      setOutput(extractReply(d) || "لا يوجد رد.");
     } catch { setNote("خطأ في الشبكة — أعد المحاولة."); }
     finally { setLoading(false); }
   }

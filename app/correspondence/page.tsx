@@ -7,6 +7,7 @@ import {
   FileText, Workflow, Lightbulb, ShieldAlert, ArrowRight,
 } from "lucide-react";
 import { useAuthGuard } from "@/lib/useAuthGuard";
+import { extractReply } from "@/lib/api";
 
 const dir = (s: string) => (/[\u0600-\u06FF]/.test(s) ? "rtl" : "ltr");
 
@@ -37,7 +38,7 @@ export default function CorrespondencePage() {
       const d = await r.json();
       if (r.status === 401) { setNote("Sign in to try the live composer."); return; }
       if (d.success === false) { setNote(d.error || "Request failed."); return; }
-      setOutput(d.response || d.reply || d.content || "No response.");
+      setOutput(extractReply(d) || "No response.");
     } catch { setNote("Network error — try again."); }
     finally { setLoading(false); }
   }

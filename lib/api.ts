@@ -83,4 +83,5 @@ export const defaultAgents: Agent[] = [
   { id: "personality", name: "Personality Assessment",description: "8-stage diagnostic: motivation, leadership, trust, blind spots" },
   { id: "tutor",       name: "Adaptive Tutor",        description: "Step-by-step teaching with testing on hard technical topics" },
   { id: "correspondence", name: "Executive Correspondence", description: "Executive business email: draft, reply, rewrite, Arabic→Business English" },
+  { id: "memo", name: "Executive Memo (Arabic)", description: "Board-grade Arabic memos: decision request, risks, financials, benefits" },
 ];

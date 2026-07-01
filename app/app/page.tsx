@@ -468,15 +468,15 @@ export default function ChatPage() {
         </div>
         <div className="border-t border-[#0d2144] p-3 space-y-1">
           {[
-            { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
+            { href: "/correspondence", icon: Mail, label: "Correspondence", adminOnly: false },
+            { href: "/cybernews", icon: Newspaper, label: "Cyber News", adminOnly: false },
+            { href: "/memo", icon: FileText, label: "Memos", adminOnly: false },
+            { href: "/personality", icon: Brain, label: "Personality", adminOnly: false },
             { href: "/recruiter", icon: Users, label: "Recruiter", adminOnly: false },
             { href: "/cyber", icon: Shield, label: "Threat Intel", adminOnly: false },
-            { href: "/cybernews", icon: Newspaper, label: "Cyber News", adminOnly: false },
+            { href: "/learn", icon: GraduationCap, label: "Tutor", adminOnly: false },
             { href: "/worldcup", icon: Trophy, label: "World Cup", adminOnly: false },
-            { href: "/personality", icon: Brain, label: "Personality", adminOnly: false },
-            { href: "/learn", icon: GraduationCap, label: "علمني", adminOnly: false },
-            { href: "/correspondence", icon: Mail, label: "Correspondence", adminOnly: false },
-            { href: "/memo", icon: FileText, label: "مذكرات", adminOnly: false },
+            { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
             { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
             { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
           ].filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner")

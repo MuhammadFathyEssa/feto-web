@@ -35,7 +35,7 @@ export default function CorrespondencePage() {
       const d = await r.json();
       if (r.status === 401) { setNote("Sign in to try the live composer."); return; }
       if (d.success === false) { setNote(d.error || "Request failed."); return; }
-      setOutput(d.reply || d.content || "No response.");
+      setOutput(d.response || d.reply || d.content || "No response.");
     } catch { setNote("Network error — try again."); }
     finally { setLoading(false); }
   }

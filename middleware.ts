@@ -6,6 +6,10 @@ const PUBLIC_EXACT = ["/"];
 const PUBLIC_PATHS = ["/login", "/forgot-password", "/reset-password", "/request-access", "/api/access-request", "/api/auth/login", "/api/auth/forgot-password", "/api/auth/reset-password"];
 // Pages + APIs only owner/admin may reach
 const ADMIN_PATHS = ["/admin", "/dashboard", "/api/users", "/twin", "/api/proxy/twin", "/decisions", "/api/proxy/decisions", "/planner", "/api/proxy/planner"];
+// Authenticated tool pages: any logged-in user, no admin role required. These are
+// NOT public — the default token gate below redirects tokenless requests to /login,
+// and each page also runs a client-side useAuthGuard as defense-in-depth.
+const AUTHED_TOOL_PATHS = ["/correspondence", "/memo", "/learn"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -28,6 +32,10 @@ export async function middleware(req: NextRequest) {
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
+
+  // Authenticated tool pages require a valid token (handled by the check above);
+  // this reference makes the requirement explicit and auditable.
+  void AUTHED_TOOL_PATHS;
 
   const session = await verifyToken(token);
   if (!session) {

@@ -6,6 +6,7 @@ import {
   ArrowLeft, FileText, Loader2, Sparkles, AlertTriangle, Copy, Check,
   ListChecks, ShieldAlert, TrendingUp, Workflow,
 } from "lucide-react";
+import { useAuthGuard } from "@/lib/useAuthGuard";
 
 type Fields = {
   subject: string;      // الموضوع
@@ -30,6 +31,7 @@ const FIELD_META: { key: keyof Fields; label: string; placeholder: string; rows:
 ];
 
 export default function MemoPage() {
+  const authState = useAuthGuard();
   const [f, setF] = useState<Fields>(EMPTY);
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -74,6 +76,10 @@ export default function MemoPage() {
     if (!output) return;
     await navigator.clipboard.writeText(output);
     setCopied(true); setTimeout(() => setCopied(false), 1500);
+  }
+
+  if (authState === "checking") {
+    return <div className="min-h-screen bg-[#071428] flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-[#e0a955]" /></div>;
   }
 
   return (

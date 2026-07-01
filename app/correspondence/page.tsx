@@ -6,6 +6,7 @@ import {
   ArrowLeft, Mail, Loader2, Sparkles, AlertTriangle, Copy, Check,
   FileText, Workflow, Lightbulb, ShieldAlert, ArrowRight,
 } from "lucide-react";
+import { useAuthGuard } from "@/lib/useAuthGuard";
 
 const dir = (s: string) => (/[\u0600-\u06FF]/.test(s) ? "rtl" : "ltr");
 
@@ -17,6 +18,7 @@ const EXAMPLES = [
 ];
 
 export default function CorrespondencePage() {
+  const authState = useAuthGuard();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,10 @@ export default function CorrespondencePage() {
     if (!output) return;
     await navigator.clipboard.writeText(output);
     setCopied(true); setTimeout(() => setCopied(false), 1500);
+  }
+
+  if (authState === "checking") {
+    return <div className="min-h-screen bg-[#071428] flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-[#e0a955]" /></div>;
   }
 
   return (

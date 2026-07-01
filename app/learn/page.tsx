@@ -6,6 +6,7 @@ import {
   CheckCircle2, ChevronRight, RotateCcw, BookOpen,
   Save, XCircle, PlayCircle
 } from "lucide-react";
+import { useAuthGuard } from "@/lib/useAuthGuard";
 
 const GOLD = "#e0a955";
 type Lang = "ar" | "en";
@@ -119,6 +120,7 @@ function RadioOpt({ label, selected, onClick }: { label: string; selected: boole
 }
 
 export default function LearnPage() {
+  const authState = useAuthGuard();
   const [lang, setLang]           = useState<Lang>("ar");
   const [phase, setPhase]         = useState<Phase>("topic");
   const [topic, setTopic]         = useState("");
@@ -271,6 +273,10 @@ export default function LearnPage() {
   const curAns = dAnswers[curQ?.id ?? ""] ?? "";
   // Show the phase labels for the action bar
   const inLesson = (phase === "lesson" || phase === "done");
+
+  if (authState === "checking") {
+    return <div className="min-h-screen bg-[#040d1a] flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" style={{ color: GOLD }} /></div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#040d1a] text-slate-200 flex flex-col" dir={isRTL ? "rtl" : "ltr"}>

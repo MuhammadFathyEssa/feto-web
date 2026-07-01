@@ -19,23 +19,8 @@ const securityHeaders = [
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "connect-src 'self'",
-      "media-src 'self' blob:",
-      "object-src 'none'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "upgrade-insecure-requests",
-    ].join("; "),
-  },
+  // Content-Security-Policy is set per-request in middleware.ts (nonce-based script-src).
+  // A static CSP here would emit a second, conflicting header.
 ];
 
 // API routes also advertise allowed methods/headers for preflight requests.

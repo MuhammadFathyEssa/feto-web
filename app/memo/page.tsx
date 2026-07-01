@@ -67,7 +67,7 @@ export default function MemoPage() {
       const d = await r.json();
       if (r.status === 401) { setNote("سجّل الدخول لتوليد المذكرة."); return; }
       if (d.success === false) { setNote(d.error || "تعذّر التوليد."); return; }
-      setOutput(d.reply || d.content || "لا يوجد رد.");
+      setOutput(d.response || d.reply || d.content || "لا يوجد رد.");
     } catch { setNote("خطأ في الشبكة — أعد المحاولة."); }
     finally { setLoading(false); }
   }

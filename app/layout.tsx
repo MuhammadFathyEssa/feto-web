@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 import IdleTimeout from "./components/IdleTimeout";
+
+// Nonce-based CSP requires dynamic rendering. Reading headers() opts every route
+// into dynamic rendering so the per-request nonce reaches the framework script tags.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "FeTo — منصة الذكاء الاصطناعي التنفيذي",
@@ -35,10 +40,11 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const nonce = (await headers()).get("x-nonce") ?? "";
   return (
     <html lang="ar">
-      <body className="bg-[#040d1a] text-slate-200 antialiased">
+      <body className="bg-[#040d1a] text-slate-200 antialiased" data-nonce={nonce}>
         <IdleTimeout />
         {children}
       </body>

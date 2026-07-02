@@ -39,13 +39,19 @@ export async function signToken(user: SessionUser): Promise<string> {
   return new SignJWT({ ...user, lastActivity: Date.now() })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
+    .setIssuer("feto.live")
+    .setAudience("feto-web")
     .setExpirationTime("7d") // absolute cap; idle timeout (12h) is the practical gate
     .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<SessionUser | null> {
   try {
-    const { payload } = await jwtVerify(token, getJwtSecret(), { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(token, getJwtSecret(), {
+      algorithms: ["HS256"],
+      issuer: "feto.live",
+      audience: "feto-web",
+    });
     const user = payload as unknown as SessionUser;
     // Enforce idle timeout — reject if inactive too long
     if (user.lastActivity && Date.now() - user.lastActivity > IDLE_TIMEOUT_MS) {

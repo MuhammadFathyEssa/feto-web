@@ -22,7 +22,7 @@ test.describe("landing page renders (CSP / hydration regression guard)", () => {
     await page.goto("/");
     // The brand mark is server-rendered inside .feto-landing. If scripts are blocked
     // the styled shell still needs to be present and visible.
-    const brand = page.locator(".logo-txt", { hasText: "FeTo" });
+    const brand = page.locator("#nav .logo-txt", { hasText: "FeTo" }).first();
     await expect(brand).toBeVisible();
     // Body must have real layout height — a blank page collapses.
     const height = await page.evaluate(() => document.body.getBoundingClientRect().height);
@@ -31,7 +31,7 @@ test.describe("landing page renders (CSP / hydration regression guard)", () => {
 
   test("sign-in control is present and interactive", async ({ page }) => {
     await page.goto("/");
-    const signIn = page.getByRole("link", { name: /sign in/i });
+    const signIn = page.locator("#nav").getByRole("link", { name: /sign in/i }).first();
     await expect(signIn).toBeVisible();
   });
 });

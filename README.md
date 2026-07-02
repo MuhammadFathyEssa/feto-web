@@ -80,8 +80,18 @@ Copy `.env.example` to `.env.local` and fill the values above.
 - All `/api/proxy/*` routes set `export const dynamic = "force-dynamic"` so they are
   always evaluated per-request (not statically cached).
 - The backend API key is server-only; it is never exposed to the browser.
+- CSP: per-request nonce + `strict-dynamic` set in `middleware.ts`; `unsafe-inline` removed
+  from `script-src`. `app/layout.tsx` sets `export const dynamic = "force-dynamic"` and reads
+  the nonce via `headers()` so it reaches server-rendered script tags (a statically prerendered
+  landing page cannot carry a per-request nonce — this is why all routes render dynamically).
+  Verified live: zero CSP violations, page renders styled.
+- E2E: Playwright specs in `e2e/` (`csp-regression`, `login`, `chat-workflow`) run against the
+  preview URL via `.github/workflows/e2e.yml`, gated on the `BASE_URL` repo variable. The
+  csp-regression spec guards against the blank-render class by asserting visible content and
+  zero CSP violations.
 
 ## Deploy (Vercel)
 
-Set the env vars above in the Vercel project, connect the repo, and deploy. The
-landing page is static; authenticated and proxy routes are server-rendered on demand.
+Set the env vars above in the Vercel project, connect the repo, and deploy. All routes are
+server-rendered on demand (required for the per-request CSP nonce); static optimization is
+traded for nonce enforcement.

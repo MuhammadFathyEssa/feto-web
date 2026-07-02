@@ -14,35 +14,11 @@ const AUTHED_TOOL_PATHS = ["/correspondence", "/memo", "/learn"];
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // F-01: per-request nonce CSP. script-src carries a fresh nonce; 'unsafe-inline' is kept
-  // ONLY as a CSP Level 3 fallback for legacy browsers, which modern browsers ignore once a
-  // nonce is present. 'strict-dynamic' is deliberately NOT used — it broke Next.js chunk
-  // loading previously. Next.js reads x-nonce and stamps its own injected scripts.
-  const nonce = btoa(crypto.randomUUID()).replace(/=/g, "");
-  const csp = [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'unsafe-inline'`,
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https:",
-    "font-src 'self' data:",
-    "connect-src 'self'",
-    "media-src 'self' blob:",
-    "object-src 'none'",
-    "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "upgrade-insecure-requests",
-  ].join("; ");
-  const applyCsp = (res: NextResponse): NextResponse => {
-    res.headers.set("Content-Security-Policy", csp);
-    return res;
-  };
-  const withNonceReq = () => {
-    const h = new Headers(req.headers);
-    h.set("x-nonce", nonce);
-    return h;
-  };
-  const nextWithNonce = () => applyCsp(NextResponse.next({ request: { headers: withNonceReq() } }));
+  // CSP is set statically in next.config.ts. The per-request nonce approach was reverted
+  // after it produced a blank render in the deployed build (scripts not executing).
+  // Closing script-src 'unsafe-inline' requires verifying hydration in the deployed build.
+  const applyCsp = (res: NextResponse): NextResponse => res;
+  const nextWithNonce = () => NextResponse.next();
 
   // Allow public marketing routes (exact match for landing root)
   if (PUBLIC_EXACT.includes(pathname)) {
@@ -82,7 +58,6 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("x-user-id", session.id);
   requestHeaders.set("x-user-email", session.email);
   requestHeaders.set("x-user-role", session.role);
-  requestHeaders.set("x-nonce", nonce);
 
   // Admin-only gating: non-admins are bounced. Pages → redirect home, APIs → 403.
   const isAdmin = session.role === "owner" || session.role === "admin";

@@ -1,0 +1,35 @@
+name: E2E (Playwright)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Playwright against preview
+    runs-on: ubuntu-latest
+    # Runs when a target URL is configured. Without BASE_URL the job is skipped,
+    # not failed — E2E requires a live target.
+    if: ${{ vars.BASE_URL != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run e2e:install
+      - name: Run E2E
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+        run: npm run e2e
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/

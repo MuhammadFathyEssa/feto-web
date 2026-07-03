@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /correspondence
+Disallow: /planner
+Disallow: /api/
+
+Sitemap: https://feto.live/sitemap.xml

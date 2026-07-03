@@ -29,6 +29,8 @@ const apiCorsHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Suppress framework disclosure (security scan LOW: X-Powered-By revealed Next.js).
+  poweredByHeader: false,
   // eslint runs during builds — surfaces real errors instead of hiding them
   async headers() {
     return [

@@ -120,14 +120,14 @@ export default function LandingPage() {
               <div>
                 <span className="eyebrow h-anim">Arabic-native · Banking-grade</span>
                 <h1 style={{ marginTop: 18 }}><span className="h-anim d1" style={{ display: "block" }}>The executive mind,</span><span className="h-anim d2" style={{ display: "block" }}><em>multiplied.</em></span></h1>
-                <p className="hero-lede h-anim d3">FeTo is an intelligence platform where twenty-three specialized AI agents reason together — in Arabic and English — for the institutions that run the region.</p>
+                <p className="hero-lede h-anim d3">FeTo is an intelligence platform where twenty-one specialized AI agents reason together — in Arabic and English — for the institutions that run the region.</p>
                 <div className="hero-actions h-anim d4">
                   <Link href="/request-access" className="btn-primary">Request access</Link>
                   <a href="https://calendly.com/eng-mfathy" target="_blank" rel="noopener noreferrer" className="btn-ghost">Book a Demo</a>
                   <a href="#platform" className="btn-ghost" style={{fontSize:13,opacity:0.6}}>See the platform</a>
                 </div>
                 <div className="hero-meta h-anim d5">
-                  <div className="item"><span className="n serif">23</span><span className="l">Specialized agents</span></div>
+                  <div className="item"><span className="n serif">21</span><span className="l">Specialized agents</span></div>
                   <div className="item"><span className="n serif">96<span style={{ fontSize: 18 }}>/100</span></span><span className="l">CTO assessment</span></div>
                   <div className="item"><span className="n serif">0</span><span className="l">Critical findings</span></div>
                 </div>
@@ -162,7 +162,7 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="sec-head reveal"><span className="eyebrow">The platform</span><h2>Not a chatbot. A reasoning institution.</h2><p>Most AI tools answer questions. FeTo convenes a council — specialized agents that debate, verify, and converge on decisions your leadership can act on. Each carries deep domain context; together they think like a seasoned executive team.</p></div>
           <div className="grid-3 stagger">
-            <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3" /></svg></div><h3>Twenty-three minds, one mandate</h3><p>Strategy, security, data, finance, content — each a specialist, orchestrated through a council layer that synthesizes a single decisive recommendation.</p></div>
+            <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3" /></svg></div><h3>Twenty-one minds, one mandate</h3><p>Strategy, security, data, finance, content — each a specialist, orchestrated through a council layer that synthesizes a single decisive recommendation.</p></div>
             <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 12h4l2-7 4 14 2-7h6" /></svg></div><h3>Arabic at the core</h3><p>Not translated, native. FeTo reasons, writes, and presents in fluent executive Arabic and English — built for the boardrooms of Cairo, Riyadh, and the Gulf.</p></div>
             <div className="card"><div className="card-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z" /><path d="M9 12l2 2 4-4" /></svg></div><h3>Banking-grade by design</h3><p>Hardened across every build, mapped to the CBE Financial Cybersecurity Framework, audited to a 96/100 CTO assessment — security is the foundation, not a feature.</p></div>
           </div>
@@ -185,7 +185,7 @@ export default function LandingPage() {
                 <div className="li"><span className="tick"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M2 6l2.5 2.5L10 3" /></svg></span><span>Available where executives already work — web, mobile, Telegram, and WhatsApp.</span></div>
               </div>
             </div>
-            <div className="split-visual reveal"><canvas className="orbit-canvas" id="orbit" aria-hidden="true" /><div className="orbit-label">23 agents · one council</div></div>
+            <div className="split-visual reveal"><canvas className="orbit-canvas" id="orbit" aria-hidden="true" /><div className="orbit-label">21 agents · one council</div></div>
           </div>
         </div>
       </section>
@@ -193,7 +193,7 @@ export default function LandingPage() {
       <section className="metrics">
         <div className="wrap">
           <div className="metrics-grid stagger">
-            <div className="metric"><div className="n serif" data-count="23">23</div><div className="l">Specialized agents</div><div className="s">orchestrated in concert</div></div>
+            <div className="metric"><div className="n serif" data-count="21">21</div><div className="l">Specialized agents</div><div className="s">orchestrated in concert</div></div>
             <div className="metric"><div className="n serif" data-count="96">96</div><div className="l">CTO assessment score</div><div className="s">out of 100</div></div>
             <div className="metric"><div className="n serif">2</div><div className="l">Languages, native</div><div className="s">Arabic &amp; English</div></div>
             <div className="metric"><div className="n serif">0</div><div className="l">Critical vulnerabilities</div><div className="s">independent scan</div></div>
@@ -225,7 +225,7 @@ export default function LandingPage() {
           <div className="reveal" style={{textAlign:"center",marginBottom:48}}>
             <span className="eyebrow">Platform in action</span>
             <h2 style={{marginTop:12}}>Built for the way <em>executives actually work.</em></h2>
-            <p style={{maxWidth:560,margin:"16px auto 0",color:"var(--slate)",lineHeight:1.7}}>Two of the twenty-three agents — a glimpse of the council at work inside a real session.</p>
+            <p style={{maxWidth:560,margin:"16px auto 0",color:"var(--slate)",lineHeight:1.7}}>Two of the twenty-one agents — a glimpse of the council at work inside a real session.</p>
           </div>
           <div className="screens-grid reveal" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:32,alignItems:"start"}}>
             <div className="screen-card" style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:16,overflow:"hidden"}}>

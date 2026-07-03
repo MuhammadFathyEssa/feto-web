@@ -89,6 +89,16 @@ Copy `.env.example` to `.env.local` and fill the values above.
   preview URL via `.github/workflows/e2e.yml`, gated on the `BASE_URL` repo variable. The
   csp-regression spec guards against the blank-render class by asserting visible content and
   zero CSP violations.
+- Header hardening: `poweredByHeader: false` (no `X-Powered-By: Next.js` disclosure); full
+  security-header set (HSTS preload, X-Frame-Options DENY, nosniff, Referrer-Policy,
+  Permissions-Policy) applied via `next.config.ts`. `Permissions-Policy` keeps `microphone=(self)`
+  because the agent chat uses `getUserMedia` for voice input. `Server: Vercel` is platform-injected
+  and cannot be suppressed (accepted residual).
+- Discovery/standards files: `public/.well-known/security.txt` (contact Eng.mfathy@gmail.com),
+  `public/robots.txt`, `app/icon.svg` favicon.
+- TLS (testssl.sh, feto.live edge): TLS 1.2 + 1.3, AEAD forward-secrecy only, no weak ciphers,
+  no known CVE exposure. `Server: Vercel` and absent extended-master-secret are Vercel edge
+  platform artifacts, not source-controllable.
 
 ## Deploy (Vercel)
 

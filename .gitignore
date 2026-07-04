@@ -1,3 +1,28 @@
+# dependencies
+node_modules/
+/.pnp
+.pnp.js
 
-# build cache
+# next.js
+/.next/
+/out/
+
+# production build
+/build
+
+# misc
 *.tsbuildinfo
+.DS_Store
+*.pem
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env
+.env
+.env*.local
+
+# vercel
+.vercel

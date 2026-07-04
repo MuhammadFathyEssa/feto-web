@@ -533,7 +533,7 @@ export default function ChatPage() {
               </div>
               <div className="text-center">
                 <h2 className="text-lg font-semibold text-slate-200">FeTo Enterprise AI</h2>
-                <p className="text-sm text-slate-500 mt-1">23 agents · 100+ commands · CBE framework · File & voice support</p>
+                <p className="text-sm text-slate-500 mt-1">21 agents · 100+ commands · CBE framework · File & voice support</p>
               </div>
               <div className="grid grid-cols-2 gap-2 w-full max-w-md">
                 {["What is Zero Trust Architecture?", "Explain CBE cybersecurity framework", "Ransomware response playbook", "T24 core banking best practices"].map((q) => (

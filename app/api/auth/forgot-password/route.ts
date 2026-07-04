@@ -26,6 +26,9 @@ export async function POST(req: NextRequest) {
     await recordFailedAttempt(key, 5, 15 * 60 * 1000);
 
     const normalized = String(email).toLowerCase().trim();
+    if (normalized.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+      return NextResponse.json({ success: false, error: "Invalid email" }, { status: 400 });
+    }
     const user = await getUserByEmail(normalized);
 
     // Always respond success — never reveal whether an account exists (enumeration guard).

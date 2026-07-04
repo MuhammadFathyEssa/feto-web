@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
+// Long-form agents (cybersecurity 4000, memo/board 8000 tokens) generate for
+// 60-120s. Without this, Vercel aborts the function at the platform default
+// (~15s) and returns 502 before the backend responds.
+export const maxDuration = 120;
 
 const BACKEND_URL = process.env.BACKEND_URL || "";
 const API_KEY = process.env.BACKEND_API_KEY || ""; // server-only — never NEXT_PUBLIC

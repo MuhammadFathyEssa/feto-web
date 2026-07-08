@@ -9,7 +9,7 @@ import {
   Send, Plus, MessageSquare, LayoutDashboard, Settings,
   Shield, ChevronDown, Bot, User, AlertCircle, Loader2,
   Menu, X, LogOut, Users, Zap, Paperclip, Mic, MicOff,
-  FileText, Image, StopCircle, Download, Copy, RotateCcw, Newspaper, Trophy, Brain, GraduationCap, Mail
+  FileText, Image, StopCircle, Download, Copy, RotateCcw, Newspaper, Trophy, Brain, GraduationCap, Mail, Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
@@ -126,6 +126,7 @@ export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userRole, setUserRole] = useState<string>("user");
   const [selectedAgent, setSelectedAgent] = useState("auto");
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [agentDropdown, setAgentDropdown] = useState(false);
 
   // File upload state
@@ -468,24 +469,64 @@ export default function ChatPage() {
         </div>
         <div className="border-t border-[#0d2144] p-3 space-y-1">
           {[
-            { href: "/correspondence", icon: Mail, label: "Correspondence", adminOnly: false },
-            { href: "/cybernews", icon: Newspaper, label: "Cyber News", adminOnly: false },
-            { href: "/memo", icon: FileText, label: "Memos", adminOnly: false },
-            { href: "/personality", icon: Brain, label: "Personality", adminOnly: false },
-            { href: "/recruiter", icon: Users, label: "Recruiter", adminOnly: false },
-            { href: "/cyber", icon: Shield, label: "Threat Intel", adminOnly: false },
-            { href: "/learn", icon: GraduationCap, label: "Tutor", adminOnly: false },
-            { href: "/worldcup", icon: Trophy, label: "World Cup", adminOnly: false },
-            { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
-            { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
-            { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
-          ].filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner")
-            .map(({ href, icon: Icon, label }) => (
-            <Link key={href} href={href} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-[#0d2144] hover:text-slate-300 transition-colors">
-              <Icon size={14} />{label}
-            </Link>
-          ))}
-          <button onClick={async()=>{await fetch("/api/auth/logout",{method:"POST"});window.location.href="/";}} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 transition-colors w-full text-left">
+            {
+              group: "Communication",
+              items: [
+                { href: "/correspondence", icon: Mail, label: "Correspondence", adminOnly: false },
+                { href: "/memo", icon: FileText, label: "Memos", adminOnly: false },
+              ],
+            },
+            {
+              group: "Intelligence",
+              items: [
+                { href: "/cybernews", icon: Newspaper, label: "Cyber News", adminOnly: false },
+                { href: "/cyber", icon: Shield, label: "Threat Intel", adminOnly: false },
+                { href: "/worldcup", icon: Trophy, label: "World Cup", adminOnly: false },
+              ],
+            },
+            {
+              group: "Advisory",
+              items: [
+                { href: "/personality", icon: Brain, label: "Personality", adminOnly: false },
+                { href: "/learn", icon: GraduationCap, label: "Tutor", adminOnly: false },
+                { href: "/recruiter", icon: Users, label: "Recruiter", adminOnly: false },
+                { href: "/prompt", icon: Sparkles, label: "Prompt Studio", adminOnly: false },
+              ],
+            },
+            {
+              group: "Workspace",
+              items: [
+                { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", adminOnly: true },
+                { href: "/admin", icon: Users, label: "Admin", adminOnly: true },
+                { href: "/settings", icon: Settings, label: "Settings", adminOnly: false },
+              ],
+            },
+          ].map(({ group, items }) => {
+            const visible = items.filter(item => !item.adminOnly || userRole === "admin" || userRole === "owner");
+            if (visible.length === 0) return null;
+            const open = openGroups[group] ?? true;
+            return (
+              <div key={group}>
+                <button
+                  onClick={() => setOpenGroups(g => ({ ...g, [group]: !open }))}
+                  className="flex items-center justify-between w-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-400 transition-colors"
+                >
+                  {group}
+                  <ChevronDown size={12} className={`transition-transform ${open ? "" : "-rotate-90"}`} />
+                </button>
+                {open && (
+                  <div className="space-y-0.5">
+                    {visible.map(({ href, icon: Icon, label }) => (
+                      <Link key={href} href={href} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-[#0d2144] hover:text-slate-300 transition-colors">
+                        <Icon size={14} />{label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          <button onClick={async()=>{await fetch("/api/auth/logout",{method:"POST"});window.location.href="/";}} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 transition-colors w-full text-left mt-2 border-t border-[#0d2144] pt-3">
             <LogOut size={14} /> Sign out
           </button>
         </div>

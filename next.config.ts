@@ -7,6 +7,9 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), geolocation=(), microphone=(self)" },
+  // Ownership + opt-out of AI scraping/indexing, asserted on every response.
+  { key: "X-Copyright", value: "© 2026 Muhammad Fathy. All Rights Reserved." },
+  { key: "X-Robots-Tag", value: "noai, noimageai" },
   // Obfuscate the hosting platform (passive-scan LOW finding: server reveals "Vercel").
   { key: "X-Powered-By", value: "" },
   { key: "Server", value: "FeTo" },

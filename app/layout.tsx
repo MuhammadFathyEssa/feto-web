@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 import IdleTimeout from "./components/IdleTimeout";
+import Footer from "./components/Footer";
 
 // Nonce-based CSP requires dynamic rendering. Reading headers() opts every route
 // into dynamic rendering so the per-request nonce reaches the framework script tags.
@@ -29,6 +30,11 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
+  authors: [{ name: "Muhammad Fathy" }],
+  other: {
+    "copyright": "© 2026 Muhammad Fathy. All Rights Reserved.",
+    "rights": "Proprietary. Unauthorized use, copying, or AI training prohibited.",
+  },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "FeTo" },
 };
@@ -47,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="bg-[#040d1a] text-slate-200 antialiased" data-nonce={nonce}>
         <IdleTimeout />
         {children}
+        <Footer />
       </body>
     </html>
   );

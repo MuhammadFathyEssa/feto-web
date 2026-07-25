@@ -70,10 +70,10 @@ export default function TermsPage() {
           <p>
             للاستفسارات أو التراخيص:{" "}
             <a
-              href="mailto:Eng.mfathy@gmail.com"
+              href="mailto:Eng.MFathy@gmail.com"
               className="text-slate-100 underline hover:text-white"
             >
-              Eng.mfathy@gmail.com
+              Eng.MFathy@gmail.com
             </a>
           </p>
         </div>

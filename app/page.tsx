@@ -306,7 +306,7 @@ export default function LandingPage() {
             <div className="foot-brand"><a className="logo" href="#top"><span className="logo-mark"><span className="logo-dot" /></span><span className="logo-txt">FeTo</span></a><p>An Arabic-native executive intelligence platform, built for the institutions that lead the region.</p></div>
             <div className="foot-col"><h4>Platform</h4><a href="#platform">Overview</a><a href="#council">The council</a><a href="#security">Security</a><a href="#vision">Vision</a></div>
             <div className="foot-col"><h4>Tools</h4><Link href="/correspondence">Executive Correspondence</Link><Link href="/memo">Executive Memos</Link><Link href="/planner">Execution Planner</Link><Link href="/learn">Adaptive Tutor</Link></div>
-            <div className="foot-col"><h4>Company</h4><a href="https://muhammadfathy.com" target="_blank" rel="noopener noreferrer">About the founder</a><a href="mailto:Eng.mfathy@gmail.com">Contact</a></div>
+            <div className="foot-col"><h4>Company</h4><a href="https://muhammadfathy.com" target="_blank" rel="noopener noreferrer">About the founder</a><a href="mailto:Eng.MFathy@gmail.com">Contact</a></div>
             <div className="foot-col"><h4>Access</h4><Link href="/login">Sign in</Link><Link href="/request-access">Request access</Link></div>
           </div>
           <div className="foot-bottom"><p>© 2026 FeTo Executive Intelligence Platform. All rights reserved.</p><p className="foot-rtl">منصّة ذكاء تنفيذي عربية · مبنية بمعايير بنكية</p></div>
